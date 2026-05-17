@@ -3,27 +3,56 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MenuPanel extends JPanel {
+    private JButton startButton;
+    private JButton settingsButton;
+    private JButton recordsButton;
+    private JButton exitButton;
+    private final Dimension buttonSize = new Dimension(200, 50);
+
     public MenuPanel() {
         setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;
-        gbc.insets = new Insets(10, 0, 10, 0);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.anchor = GridBagConstraints.CENTER;
 
-        JButton startButton = new JButton("Start");
-        JButton settingsButton = new JButton("Settings");
-        JButton recordsButton = new JButton("Records");
-        JButton exitButton = new JButton("Exit");
+        JLabel titleLabel = new JLabel("8-Ball");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 48));
+        add(titleLabel, gbc);
 
-        Dimension buttonSize = new Dimension(200, 50);
+        startButton = new JButton("Start Game");
         startButton.setPreferredSize(buttonSize);
-        settingsButton.setPreferredSize(buttonSize);
-        recordsButton.setPreferredSize(buttonSize);
-        exitButton.setPreferredSize(buttonSize);
-
         add(startButton, gbc);
+
+        settingsButton = new JButton("Settings");
+        settingsButton.setPreferredSize(buttonSize);
         add(settingsButton, gbc);
+
+        recordsButton = new JButton("Records");
+        recordsButton.setPreferredSize(buttonSize);
         add(recordsButton, gbc);
+
+        exitButton = new JButton("Exit");
+        exitButton.setPreferredSize(buttonSize);
         add(exitButton, gbc);
+        exitButton.addActionListener(e -> System.exit(0));
+    }
+
+    public JButton getStartButton() {
+        return startButton;
+    }
+
+    public JButton getSettingsButton() {
+        return settingsButton;
+    }
+
+    public JButton getRecordsButton() {
+        return recordsButton;
+    }
+
+    public JButton getExitButton() {
+        return exitButton;
     }
 }
