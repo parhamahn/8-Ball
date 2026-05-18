@@ -24,17 +24,135 @@ public class GamePanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor(new Color(0, 100, 0));  // dark green
-        g2d.fillRect((int) table.getStartX(), (int) table.getStartY(), getWidth(), getHeight());
+        g2d.setColor(new Color(0, 100, 0));
+        int surfaceX = (int) table.getStartX();
+        int surfaceY = (int) table.getStartY();
+        int surfaceW = (int) table.getWidth();
+        int surfaceH = (int) table.getHeight();
+        g2d.fillRect(surfaceX, surfaceY, surfaceW, surfaceH);
+
+        drawCushions(g2d);
 
         g2d.setColor(Color.BLACK);
         for (Pocket pocket : table.getPockets()) {
-            int x = (int)(pocket.getCenterX() - pocket.getRadius());
-            int y = (int)(pocket.getCenterY() - pocket.getRadius());
-            int diameter = (int)(pocket.getRadius() * 2);
+            int x = (int) (pocket.getCenterX() - pocket.getRadius());
+            int y = (int) (pocket.getCenterY() - pocket.getRadius());
+            int diameter = (int) (pocket.getRadius() * 2);
             g2d.fillOval(x, y, diameter, diameter);
         }
+    }
 
+    private void drawCushions(Graphics2D g2d) {
+        double playLeft = table.getStartX();
+        double playRight = table.getEndX();
+        double playTop = table.getStartY();
+        double playBottom = table.getEndY();
+
+        double cThick = table.getCushionThickness();
+        double pRadius = Pocket.getDefaultRadius();
+        double centerX = (playLeft + playRight) / 2.0;
+        double cornerFactor = 1.5;
+        double centerGap = 0.6 * pRadius;
+        double centerHalf = centerGap / 2.0;
+
+        double outerTop = playTop + cThick;
+        double outerBottom = playBottom - cThick;
+        double outerLeft = playLeft + cThick;
+        double outerRight = playRight - cThick;
+
+        g2d.setColor(new Color(139, 69, 19));
+
+        int[] xPoints, yPoints;
+
+        // Top left
+        xPoints = new int[] {
+                (int)(playLeft + cornerFactor * pRadius + cThick),
+                (int)(centerX - centerHalf - cThick),
+                (int)(centerX - centerHalf),
+                (int)(playLeft + cornerFactor * pRadius)
+        };
+        yPoints = new int[] {
+                (int)outerTop,
+                (int)outerTop,
+                (int)playTop,
+                (int)playTop
+        };
+        g2d.fillPolygon(xPoints, yPoints, 4);
+
+        // Top right
+        xPoints = new int[] {
+                (int)(centerX + centerHalf + cThick),
+                (int)(playRight - cornerFactor * pRadius - cThick),
+                (int)(playRight - cornerFactor * pRadius),
+                (int)(centerX + centerHalf)
+        };
+        yPoints = new int[] {
+                (int)outerTop,
+                (int)outerTop,
+                (int)playTop,
+                (int)playTop
+        };
+        g2d.fillPolygon(xPoints, yPoints, 4);
+
+        // Bottom left
+        xPoints = new int[] {
+                (int)(playLeft + cornerFactor * pRadius + cThick),
+                (int)(centerX - centerHalf - cThick),
+                (int)(centerX - centerHalf),
+                (int)(playLeft + cornerFactor * pRadius)
+        };
+        yPoints = new int[] {
+                (int)outerBottom,
+                (int)outerBottom,
+                (int)playBottom,
+                (int)playBottom
+        };
+        g2d.fillPolygon(xPoints, yPoints, 4);
+
+        // Bottom right
+        xPoints = new int[] {
+                (int)(centerX + centerHalf + cThick),
+                (int)(playRight - cornerFactor * pRadius - cThick),
+                (int)(playRight - cornerFactor * pRadius),
+                (int)(centerX + centerHalf)
+        };
+        yPoints = new int[] {
+                (int)outerBottom,
+                (int)outerBottom,
+                (int)playBottom,
+                (int)playBottom
+        };
+        g2d.fillPolygon(xPoints, yPoints, 4);
+
+        // Left side
+        xPoints = new int[] {
+                (int)outerLeft,
+                (int)outerLeft,
+                (int)playLeft,
+                (int)playLeft
+        };
+        yPoints = new int[] {
+                (int)(playTop + cornerFactor * pRadius + cThick),
+                (int)(playBottom - cornerFactor * pRadius - cThick),
+                (int)(playBottom - cornerFactor * pRadius),
+                (int)(playTop + cornerFactor * pRadius)
+        };
+        g2d.fillPolygon(xPoints, yPoints, 4);
+
+        // Right side
+        xPoints = new int[] {
+                (int)outerRight,
+                (int)outerRight,
+                (int)playRight,
+                (int)playRight
+        };
+        yPoints = new int[] {
+                (int)(playTop + cornerFactor * pRadius + cThick),
+                (int)(playBottom - cornerFactor * pRadius - cThick),
+                (int)(playBottom - cornerFactor * pRadius),
+                (int)(playTop + cornerFactor * pRadius)
+        };
+        g2d.fillPolygon(xPoints, yPoints, 4);
     }
     public JButton getExitButton() {
         return exitButton;

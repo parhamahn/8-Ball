@@ -16,18 +16,21 @@ public class Table {
     private final double cushionThickness;
     private final List<Pocket> pockets;
 
-    public Table(){
+    private final double cornerFactor = 1.5;
+    private final double centerGapFactor = 0.1;
+
+    public Table() {
         this.startX = DEFAULT_STARTX;
         this.startY = DEFAULT_STARTY;
         this.endX = DEFAULT_ENDX;
         this.endY = DEFAULT_ENDY;
-        this.cushionThickness = Pocket.getDefaultRadius();
+        this.cushionThickness = Pocket.getDefaultRadius() * 2;
         this.pockets = new ArrayList<>();
         pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 1));
-        pockets.add(new Pocket((endX - startX)/2, startY + Pocket.getDefaultRadius(), 2));
+        pockets.add(new Pocket((endX - startX) / 2, startY + Pocket.getDefaultRadius(), 2));
         pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 3));
         pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 4));
-        pockets.add(new Pocket((endX - startX)/2, endY - Pocket.getDefaultRadius(), 5));
+        pockets.add(new Pocket((endX - startX) / 2, endY - Pocket.getDefaultRadius(), 5));
         pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 6));
     }
 
@@ -71,11 +74,68 @@ public class Table {
         return pockets;
     }
 
-    public double getWidth(){
+    public double getWidth() {
         return endX - startX;
     }
 
-    public double getHeight(){
+    public double getHeight() {
         return endY - startY;
+    }
+
+    public List<int[][]> getCushionPolygons() {
+        double playLeft = startX;
+        double playRight = endX;
+        double playTop = startY;
+        double playBottom = endY;
+
+        double cThick = cushionThickness;
+        double pRadius = Pocket.getDefaultRadius();
+        double centerX = (playLeft + playRight) / 2.0;
+        double centerHalf = (centerGapFactor * pRadius) / 2.0;
+
+        double outerTop = playTop + cThick;
+        double outerBottom = playBottom - cThick;
+        double outerLeft = playLeft + cThick;
+        double outerRight = playRight - cThick;
+
+        List<int[][]> polygons = new ArrayList<>();
+
+        // Top left
+        polygons.add(new int[][] {
+                {(int)(playLeft + cornerFactor * pRadius + cThick), (int)(centerX - centerHalf - cThick), (int)(centerX - centerHalf), (int)(playLeft + cornerFactor * pRadius)},
+                {(int)outerTop, (int)outerTop, (int)playTop, (int)playTop}
+        });
+
+        // Top right
+        polygons.add(new int[][] {
+                {(int)(centerX + centerHalf + cThick), (int)(playRight - cornerFactor * pRadius - cThick), (int)(playRight - cornerFactor * pRadius), (int)(centerX + centerHalf)},
+                {(int)outerTop, (int)outerTop, (int)playTop, (int)playTop}
+        });
+
+        // Bottom left
+        polygons.add(new int[][] {
+                {(int)(playLeft + cornerFactor * pRadius + cThick), (int)(centerX - centerHalf - cThick), (int)(centerX - centerHalf), (int)(playLeft + cornerFactor * pRadius)},
+                {(int)outerBottom, (int)outerBottom, (int)playBottom, (int)playBottom}
+        });
+
+        // Bottom right
+        polygons.add(new int[][] {
+                {(int)(centerX + centerHalf + cThick), (int)(playRight - cornerFactor * pRadius - cThick), (int)(playRight - cornerFactor * pRadius), (int)(centerX + centerHalf)},
+                {(int)outerBottom, (int)outerBottom, (int)playBottom, (int)playBottom}
+        });
+
+        // Left side
+        polygons.add(new int[][] {
+                {(int)outerLeft, (int)outerLeft, (int)playLeft, (int)playLeft},
+                {(int)(playTop + cornerFactor * pRadius + cThick), (int)(playBottom - cornerFactor * pRadius - cThick), (int)(playBottom - cornerFactor * pRadius), (int)(playTop + cornerFactor * pRadius)}
+        });
+
+        // Right side
+        polygons.add(new int[][] {
+                {(int)outerRight, (int)outerRight, (int)playRight, (int)playRight},
+                {(int)(playTop + cornerFactor * pRadius + cThick), (int)(playBottom - cornerFactor * pRadius - cThick), (int)(playBottom - cornerFactor * pRadius), (int)(playTop + cornerFactor * pRadius)}
+        });
+
+        return polygons;
     }
 }
