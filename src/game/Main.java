@@ -15,9 +15,11 @@ public class Main {
     private Player player2;
     private Settings settings;
     private GameState gameState;
+    private Table table;
 
     private MenuController menuController;
     private SettingsController settingsController;
+    private GameController gameController;
 
     public static void main(String[] args) {
         new Main().createAndShowGUI();
@@ -33,18 +35,21 @@ public class Main {
         player2 = new Player("Player 2");
         settings = new Settings();
         gameState = new GameState();
+        table = new Table();
 
         MenuPanel menuPanel = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
+        GamePanel gamePanel = new GamePanel(table);
 
         menuController = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
-
+        gameController = new GameController(gamePanel, this);
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         mainPanel.add(menuPanel, "menu");
         mainPanel.add(settingsPanel, "settings");
+        mainPanel.add(gamePanel, "game");
 
         frame.add(mainPanel);
         frame.setVisible(true);
@@ -58,4 +63,6 @@ public class Main {
     public void showSettings() {
         cardLayout.show(mainPanel, "settings");
     }
+
+    public void showGame() {cardLayout.show(mainPanel, "game");}
 }

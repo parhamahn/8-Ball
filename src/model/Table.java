@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Table {
     private static double DEFAULT_STARTX = 0;
-    private static double DEFAULT_STARTY = 0;
-    private static double DEFAULT_ENDX = 1000;
-    private static double DEFAULT_ENDY = 500;
+    private static double DEFAULT_STARTY = 200;
+    private static double DEFAULT_ENDX = 1200;
+    private static double DEFAULT_ENDY = 800;
 
     private final double startX;
     private final double endX;
@@ -23,12 +23,12 @@ public class Table {
         this.endY = DEFAULT_ENDY;
         this.cushionThickness = Pocket.getDefaultRadius();
         this.pockets = new ArrayList<>();
-        pockets.add(new Pocket(startX, startY, 1));
-        pockets.add(new Pocket((endX - startX)/2, startY, 2));
-        pockets.add(new Pocket(endX, startY, 3));
-        pockets.add(new Pocket(startX, endY, 4));
-        pockets.add(new Pocket((endX - startX)/2, endY, 5));
-        pockets.add(new Pocket(endX, endY, 6));
+        pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 1));
+        pockets.add(new Pocket((endX - startX)/2, startY + Pocket.getDefaultRadius(), 2));
+        pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 3));
+        pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 4));
+        pockets.add(new Pocket((endX - startX)/2, endY - Pocket.getDefaultRadius(), 5));
+        pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 6));
     }
 
     public static double getDefaultStartx() {

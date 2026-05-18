@@ -14,5 +14,6 @@ public class MenuController {
 
     private void attachListeners() {
         view.getSettingsButton().addActionListener(e -> mainApp.showSettings());
+        view.getStartButton().addActionListener(e -> mainApp.showGame());
     }
 }

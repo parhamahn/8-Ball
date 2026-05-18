@@ -1,7 +1,7 @@
 package model;
 
 public class Pocket {
-    private static double DEFAULT_RADIUS = 15;
+    private static double DEFAULT_RADIUS = 25;
 
     private double centerX;
     private double centerY;
