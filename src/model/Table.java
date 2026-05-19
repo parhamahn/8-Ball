@@ -15,8 +15,8 @@ public class Table {
     private final double startY;
     private final double endY;
     private final double cushionThickness;
-    private final List<Pocket> pockets;
-    private final List<Ball> balls;
+    private List<Pocket> pockets;
+    private List<Ball> balls;
 
     private final double cornerFactor = 1.5;
     private final double centerGapFactor = 0.1;
@@ -27,6 +27,18 @@ public class Table {
         this.endX = DEFAULT_ENDX;
         this.endY = DEFAULT_ENDY;
         this.cushionThickness = Pocket.getDefaultRadius() * 2;
+
+        resetBalls();
+        resetPockets();
+
+    }
+
+    public void resetBalls(){
+        this.balls = new ArrayList<>();
+        balls.add(new Ball(getWidth()/4, getHeight()/2 + DEFAULT_STARTY, Ball.BallType.CUE, 0));
+    }
+
+    public void resetPockets(){
         this.pockets = new ArrayList<>();
 
         pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 1));
@@ -35,10 +47,6 @@ public class Table {
         pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 4));
         pockets.add(new Pocket((endX - startX) / 2, endY - Pocket.getDefaultRadius(), 5));
         pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 6));
-
-        this.balls = new ArrayList<>();
-
-        balls.add(new Ball(getWidth()/4, getHeight()/2 + DEFAULT_STARTY, Ball.BallType.CUE, 0));
     }
 
     public static double getDefaultStartx() {
@@ -166,6 +174,11 @@ public class Table {
             }
         }
         return false;
+    }
+
+    public void resetTable(){
+        resetPockets();
+        resetBalls();
     }
 
 }

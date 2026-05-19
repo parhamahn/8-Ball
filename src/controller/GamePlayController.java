@@ -1,6 +1,7 @@
 package controller;
 
 import model.Ball;
+import model.GameState;
 import model.Physics;
 import model.Table;
 
@@ -12,24 +13,24 @@ import java.awt.geom.Point2D;
 public class GamePlayController extends MouseAdapter {
     private Table table;
     private Physics physics;
-    private Ball cueBall;
+    private GameState gameState;
 
     private Point2D dragStart;
 
-    public GamePlayController(Table table, Physics physics) {
+    public GamePlayController(Table table, Physics physics, GameState gameState) {
         this.table = table;
         this.physics = physics;
-        this.cueBall = table.getBall(0);
+        this.gameState = gameState;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e) && !gameState.isMoving()) {
             double distanceToBall = Point2D.distance(
                     e.getX(), e.getY(),
-                    cueBall.getX(), cueBall.getY()
+                    this.table.getBall(0).getX(), this.table.getBall(0).getY()
             );
-            if (distanceToBall < cueBall.getRadius()*2) {
+            if (distanceToBall < this.table.getBall(0).getRadius()*2) {
                 dragStart = new Point2D.Double(e.getX(), e.getY());
             }
         }

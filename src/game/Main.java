@@ -37,11 +37,11 @@ public class Main {
         player1   = new Player("Player 1");
         player2   = new Player("Player 2");
         settings  = new Settings();
-        gameState = new GameState();
+        gameState = new GameState(false);
         table     = new Table();
 
         // Physics created before GamePanel so it can be injected
-        physics   = new Physics(table);
+        physics   = new Physics(table, gameState);
 
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
@@ -51,7 +51,7 @@ public class Main {
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
         gameController     = new GameController(gamePanel, this);
 
-        GamePlayController gamePlayController = new GamePlayController(table, physics);
+        GamePlayController gamePlayController = new GamePlayController(table, physics, gameState);
         gamePanel.addMouseListener(gamePlayController);
         gamePanel.addMouseMotionListener(gamePlayController);
 
@@ -76,6 +76,8 @@ public class Main {
     }
 
     public void showGame() {
+        table.resetTable();
+        gameState.setMoving(false);
         cardLayout.show(mainPanel, "game");
         gamePanel.startLoop();
     }
