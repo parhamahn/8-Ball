@@ -2,8 +2,9 @@ package model;
 
 public class Ball {
     public enum BallType {CUE, SOLID, STRIPE, EIGHT}
-    public static final double DEFAULT_RADIUS = 10.0;
+    public static final double DEFAULT_RADIUS = 17.0;
     public static final double MIN_VELOCITY = 0.01;
+    public static final double DEFAULT_FRICTION = 0.015;
 
     private double x;
     private double y;

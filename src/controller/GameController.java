@@ -2,6 +2,7 @@ package controller;
 
 import game.Main;
 import view.GamePanel;
+import javax.swing.*;
 
 public class GameController {
     private GamePanel view;

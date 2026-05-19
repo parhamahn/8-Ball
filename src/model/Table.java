@@ -15,6 +15,7 @@ public class Table {
     private final double endY;
     private final double cushionThickness;
     private final List<Pocket> pockets;
+    private final List<Ball> balls;
 
     private final double cornerFactor = 1.5;
     private final double centerGapFactor = 0.1;
@@ -26,12 +27,17 @@ public class Table {
         this.endY = DEFAULT_ENDY;
         this.cushionThickness = Pocket.getDefaultRadius() * 2;
         this.pockets = new ArrayList<>();
+
         pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 1));
         pockets.add(new Pocket((endX - startX) / 2, startY + Pocket.getDefaultRadius(), 2));
         pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), startY + Pocket.getDefaultRadius(), 3));
         pockets.add(new Pocket(startX + Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 4));
         pockets.add(new Pocket((endX - startX) / 2, endY - Pocket.getDefaultRadius(), 5));
         pockets.add(new Pocket(endX - Pocket.getDefaultRadius(), endY - Pocket.getDefaultRadius(), 6));
+
+        this.balls = new ArrayList<>();
+
+        balls.add(new Ball(getWidth()/4, getHeight()/2 + DEFAULT_STARTY, Ball.BallType.CUE, 0));
     }
 
     public static double getDefaultStartx() {
@@ -137,5 +143,18 @@ public class Table {
         });
 
         return polygons;
+    }
+
+    public List<Ball> getBalls(){
+        return balls;
+    }
+
+    public Ball getBall(int number){
+        for(Ball ball: getBalls()){
+            if(ball.getNumber()==number){
+                return ball;
+            }
+        }
+        return null;
     }
 }

@@ -1,4 +1,5 @@
-package game;// Main.java
+package game;
+
 import view.*;
 import controller.*;
 import model.*;
@@ -16,10 +17,12 @@ public class Main {
     private Settings settings;
     private GameState gameState;
     private Table table;
+    private Physics physics;
 
     private MenuController menuController;
     private SettingsController settingsController;
     private GameController gameController;
+    private GamePanel gamePanel;
 
     public static void main(String[] args) {
         new Main().createAndShowGUI();
@@ -31,25 +34,32 @@ public class Main {
         frame.setSize(1200, 800);
         frame.setLocationRelativeTo(null);
 
-        player1 = new Player("Player 1");
-        player2 = new Player("Player 2");
-        settings = new Settings();
+        player1   = new Player("Player 1");
+        player2   = new Player("Player 2");
+        settings  = new Settings();
         gameState = new GameState();
-        table = new Table();
+        table     = new Table();
 
-        MenuPanel menuPanel = new MenuPanel();
+        // Physics created before GamePanel so it can be injected
+        physics   = new Physics(table);
+
+        MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
-        GamePanel gamePanel = new GamePanel(table);
+        gamePanel = new GamePanel(table, physics);
 
-        menuController = new MenuController(menuPanel, this);
+        menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
-        gameController = new GameController(gamePanel, this);
+        gameController     = new GameController(gamePanel, this);
+
+        GamePlayController gamePlayController = new GamePlayController(table, physics);
+        gamePanel.addMouseListener(gamePlayController);
+        gamePanel.addMouseMotionListener(gamePlayController);
 
         cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-        mainPanel.add(menuPanel, "menu");
+        mainPanel  = new JPanel(cardLayout);
+        mainPanel.add(menuPanel,     "menu");
         mainPanel.add(settingsPanel, "settings");
-        mainPanel.add(gamePanel, "game");
+        mainPanel.add(gamePanel,     "game");
 
         frame.add(mainPanel);
         frame.setVisible(true);
@@ -57,6 +67,7 @@ public class Main {
     }
 
     public void showMenu() {
+        gamePanel.stopLoop();
         cardLayout.show(mainPanel, "menu");
     }
 
@@ -64,5 +75,8 @@ public class Main {
         cardLayout.show(mainPanel, "settings");
     }
 
-    public void showGame() {cardLayout.show(mainPanel, "game");}
+    public void showGame() {
+        cardLayout.show(mainPanel, "game");
+        gamePanel.startLoop();
+    }
 }
