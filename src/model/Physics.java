@@ -13,6 +13,9 @@ public class Physics {
         for (Ball ball: table.getBalls()){
             ball.updatePosition(dt);
             ball.applyFriction(Ball.DEFAULT_FRICTION);
+            if (table.willPocket(ball)){
+                ball.setPocketed(true);
+            }
         }
     }
 

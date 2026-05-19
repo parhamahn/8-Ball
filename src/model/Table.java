@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,4 +158,14 @@ public class Table {
         }
         return null;
     }
+
+    public boolean willPocket(Ball ball){
+        for (Pocket pocket: pockets){
+            if (Point2D.distance(ball.getX(), ball.getY(), pocket.getCenterX(), pocket.getCenterY())<pocket.getRadius()-ball.getRadius()){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
