@@ -205,7 +205,7 @@ public class Table {
 
     public boolean willPocket(Ball ball){
         for (Pocket pocket: pockets){
-            if (Point2D.distance(ball.getX(), ball.getY(), pocket.getCenterX(), pocket.getCenterY())<pocket.getRadius()-ball.getRadius()){
+            if (Point2D.distance(ball.getX(), ball.getY(), pocket.getCenterX(), pocket.getCenterY())<2*(pocket.getRadius()-ball.getRadius())){
                 return true;
             }
         }

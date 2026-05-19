@@ -45,13 +45,13 @@ public class Main {
 
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
-        gamePanel = new GamePanel(table, physics);
+        GamePlayController gamePlayController = new GamePlayController(table, physics, gameState);
+        gamePanel = new GamePanel(table, physics, gamePlayController);
 
         menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
         gameController     = new GameController(gamePanel, this);
 
-        GamePlayController gamePlayController = new GamePlayController(table, physics, gameState);
         gamePanel.addMouseListener(gamePlayController);
         gamePanel.addMouseMotionListener(gamePlayController);
 

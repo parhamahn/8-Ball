@@ -1,5 +1,6 @@
 package view;
 
+import controller.GamePlayController;
 import model.Ball;
 import model.Physics;
 import model.Pocket;
@@ -7,6 +8,7 @@ import model.Table;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 public class GamePanel extends JPanel {
 
@@ -17,10 +19,12 @@ public class GamePanel extends JPanel {
     private Table table;
     private Physics physics;
     private Timer gameLoop;
+    private GamePlayController gamePlayController; // added
 
-    public GamePanel(Table table, Physics physics) {
+    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController) {
         this.table = table;
         this.physics = physics;
+        this.gamePlayController = gamePlayController;
 
         setBackground(new Color(30, 30, 40));
         exitButton = new JButton("Exit");
@@ -51,6 +55,7 @@ public class GamePanel extends JPanel {
         drawCushions(g2d);
         drawPockets(g2d);
         drawBalls(g2d);
+        drawAimingLine(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -137,11 +142,11 @@ public class GamePanel extends JPanel {
 
             if (ball.getBallType() == Ball.BallType.CUE) {
                 g2d.setColor(Color.WHITE);
-            }else if(ball.getBallType()==Ball.BallType.EIGHT) {
+            } else if (ball.getBallType() == Ball.BallType.EIGHT) {
                 g2d.setColor(Color.BLACK);
-            }else if(ball.getBallType()==Ball.BallType.SOLID){
+            } else if (ball.getBallType() == Ball.BallType.SOLID) {
                 g2d.setColor(Color.RED);
-            }else{
+            } else {
                 g2d.setColor(Color.YELLOW);
             }
 
@@ -150,6 +155,40 @@ public class GamePanel extends JPanel {
             int diameter = (int)(ball.getRadius() * 2);
             g2d.fillOval(drawX, drawY, diameter, diameter);
         }
+    }
+
+    private void drawAimingLine(Graphics2D g2d) {
+        if (gamePlayController == null) return;
+        if (!gamePlayController.isDragging()) return;
+
+        Ball cueBall = table.getBall(0);
+        if (cueBall == null || cueBall.isPocketed()) return;
+
+        Point2D dragStart = gamePlayController.getDragStart();
+        Point2D dragCurrent = gamePlayController.getDragCurrent();
+        if (dragStart == null || dragCurrent == null) return;
+
+        double dirX = dragStart.getX() - dragCurrent.getX();
+        double dirY = dragStart.getY() - dragCurrent.getY();
+        double distance = Math.hypot(dirX, dirY);
+        if (distance < 0.001) return;
+
+        dirX /= distance;
+        dirY /= distance;
+
+        double power = Math.min(distance / 10.0, 20.0);
+        double lineLength = power * 10.0;
+        double startX = cueBall.getX();
+        double startY = cueBall.getY();
+        double endX = startX + dirX * lineLength;
+        double endY = startY + dirY * lineLength;
+
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(new BasicStroke(2.0f));
+        g2d.drawLine((int)startX, (int)startY, (int)endX, (int)endY);
+
+        g2d.setStroke(new BasicStroke(1.0f));
+        g2d.drawOval((int)(endX - 3), (int)(endY - 3), 6, 6);
     }
 
     public JButton getExitButton() {
