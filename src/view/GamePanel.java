@@ -137,7 +137,11 @@ public class GamePanel extends JPanel {
 
             if (ball.getBallType() == Ball.BallType.CUE) {
                 g2d.setColor(Color.WHITE);
-            } else {
+            }else if(ball.getBallType()==Ball.BallType.EIGHT) {
+                g2d.setColor(Color.BLACK);
+            }else if(ball.getBallType()==Ball.BallType.SOLID){
+                g2d.setColor(Color.RED);
+            }else{
                 g2d.setColor(Color.YELLOW);
             }
 

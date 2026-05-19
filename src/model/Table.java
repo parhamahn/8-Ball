@@ -33,10 +33,46 @@ public class Table {
 
     }
 
-    public void resetBalls(){
+    public void resetBalls() {
+
         this.balls = new ArrayList<>();
-        balls.add(new Ball(getWidth()/4, getHeight()/2 + DEFAULT_STARTY, Ball.BallType.CUE, 0));
+
+        double cueX = getWidth() / 4.0;
+        double cueY = getHeight() / 2.0 + DEFAULT_STARTY;
+
+        double rackX = getWidth() * 3.0 / 4.0;
+        double rackY = getHeight() / 2.0 + DEFAULT_STARTY;
+
+        balls.add(new Ball(cueX, cueY, Ball.BallType.CUE, 0));
+
+        double r = Ball.DEFAULT_RADIUS;
+        double spacing = 2 * r + 1;
+
+        int[] ballNumbers = {1, 2, 9, 10, 8, 3, 11, 4, 5, 12, 6, 13, 7, 14, 15};
+        int index = 0;
+
+        for (int row = 0; row < 5; row++) {
+            for (int col = 0; col <= row; col++) {
+                double x = rackX + row * spacing * Math.cos(Math.PI / 6);
+                double y = rackY + (col - row / 2.0) * spacing;
+
+                int number = ballNumbers[index];
+                Ball.BallType type;
+
+                if (number == 8) {
+                    type = Ball.BallType.EIGHT;
+                } else if (number <= 7) {
+                    type = Ball.BallType.STRIPE;
+                } else {
+                    type = Ball.BallType.SOLID;
+                }
+
+                this.balls.add(new Ball(x, y, type, number));
+                index++;
+            }
+        }
     }
+
 
     public void resetPockets(){
         this.pockets = new ArrayList<>();
