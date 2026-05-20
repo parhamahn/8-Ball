@@ -17,6 +17,7 @@ public class Physics {
         for (Ball ball: table.getBalls()){
             if (ball.isPocketed()){continue;}
 
+            this.checkBallCushionCollision(ball);
             this.updatePosition(ball, dt);
             this.gettingInPocket(ball);
             this.checkBallCushionCollision(ball);
