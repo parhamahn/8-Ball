@@ -15,14 +15,16 @@ public class GamePlayController extends MouseAdapter {
     private Table table;
     private Physics physics;
     private GameState gameState;
+    private GamePanel gamePanel;
 
     private Point2D dragStart;
     private Point2D dragCurrent;
 
-    public GamePlayController(Table table, Physics physics, GameState gameState) {
+    public GamePlayController(Table table, Physics physics, GameState gameState, GamePanel gamePanel) {
         this.table = table;
         this.physics = physics;
         this.gameState = gameState;
+        this.gamePanel = gamePanel;
     }
 
     @Override
@@ -78,8 +80,6 @@ public class GamePlayController extends MouseAdapter {
             }
         }
     }
-
-    private GamePanel gamePanel;
 
     public boolean isDragging() {
         return dragStart != null && dragCurrent != null;

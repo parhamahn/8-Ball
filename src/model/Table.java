@@ -9,6 +9,7 @@ public class Table {
     private static double DEFAULT_STARTY = 200;
     private static double DEFAULT_ENDX = 1200;
     private static double DEFAULT_ENDY = 800;
+    public static final double CUSHION_RESTITUTION = 0.75;
 
     private final double startX;
     private final double endX;

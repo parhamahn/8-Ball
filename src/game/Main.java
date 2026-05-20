@@ -45,7 +45,7 @@ public class Main {
 
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
-        GamePlayController gamePlayController = new GamePlayController(table, physics, gameState);
+        GamePlayController gamePlayController = new GamePlayController(table, physics, gameState, gamePanel);
         gamePanel = new GamePanel(table, physics, gamePlayController);
 
         menuController     = new MenuController(menuPanel, this);

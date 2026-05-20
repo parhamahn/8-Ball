@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Physics {
     private Table table;
@@ -14,10 +15,12 @@ public class Physics {
     public void updatePhysics(double dt){
         gameState.setMoving(false);
         for (Ball ball: table.getBalls()){
+            if (ball.isPocketed()){continue;}
 
             this.updatePosition(ball, dt);
-            gettingInPocket(ball);
-            checkBallsCollision(ball);
+            this.gettingInPocket(ball);
+            this.checkBallCushionCollision(ball);
+            this.checkBallsCollision(ball);
 
         }
         checkMoving();
@@ -79,6 +82,53 @@ public class Physics {
                     other.setVx(other.getVx() - impulse * nx);
                     other.setVy(other.getVy() - impulse * ny);
                 }
+            }
+        }
+    }
+
+    public void checkBallCushionCollision(Ball ball) {
+        List<int[][]> cushionPolygons = table.getCushionPolygons();
+
+        for (int[][] polygon : cushionPolygons) {
+            int[] xs = polygon[0];
+            int[] ys = polygon[1];
+            int numVertices = xs.length;
+
+            for (int i = 0; i < numVertices; i++) {
+                int j = (i + 1) % numVertices;
+
+                double ax = xs[i], ay = ys[i];
+                double bx = xs[j], by = ys[j];
+
+                double edgeDx = bx - ax;
+                double edgeDy = by - ay;
+                double lenSq  = edgeDx * edgeDx + edgeDy * edgeDy;
+                if (lenSq == 0) continue;
+
+                double t = ((ball.getX() - ax) * edgeDx + (ball.getY() - ay) * edgeDy) / lenSq;
+                t = Math.max(0.0, Math.min(1.0, t));
+
+                double closestX = ax + t * edgeDx;
+                double closestY = ay + t * edgeDy;
+
+                double diffX = ball.getX() - closestX;
+                double diffY = ball.getY() - closestY;
+                double dist  = Math.hypot(diffX, diffY);
+
+                if (dist == 0 || dist >= ball.getRadius()) continue;
+
+                double nx = diffX / dist;
+                double ny = diffY / dist;
+
+                double velDotNormal = ball.getVx() * nx + ball.getVy() * ny;
+                if (velDotNormal >= 0) continue;
+
+                double penetration = ball.getRadius() - dist;
+                ball.setX(ball.getX() + nx * penetration);
+                ball.setY(ball.getY() + ny * penetration);
+
+                ball.setVx(ball.getVx() - (1 + Table.CUSHION_RESTITUTION) * velDotNormal * nx);
+                ball.setVy(ball.getVy() - (1 + Table.CUSHION_RESTITUTION) * velDotNormal * ny);
             }
         }
     }
