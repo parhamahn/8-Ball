@@ -32,6 +32,7 @@ public class Physics {
         Ball cueBall = table.getBall(0);
         cueBall.setVx(power* direction.get(0));
         cueBall.setVy(power* direction.get(1));
+        gameState.switchTurns();
     }
 
     public void updatePosition(Ball ball, double dt){

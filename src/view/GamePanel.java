@@ -1,13 +1,11 @@
 package view;
 
 import controller.GamePlayController;
-import model.Ball;
-import model.Physics;
-import model.Pocket;
-import model.Table;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
 public class GamePanel extends JPanel {
@@ -19,12 +17,14 @@ public class GamePanel extends JPanel {
     private Table table;
     private Physics physics;
     private Timer gameLoop;
-    private GamePlayController gamePlayController; // added
+    private GamePlayController gamePlayController;
+    private GameState gameState;
 
-    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController) {
+    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController, GameState gameState) {
         this.table = table;
         this.physics = physics;
         this.gamePlayController = gamePlayController;
+        this.gameState = gameState;
 
         setBackground(new Color(30, 30, 40));
         exitButton = new JButton("Exit");
@@ -56,6 +56,7 @@ public class GamePanel extends JPanel {
         drawPockets(g2d);
         drawBalls(g2d);
         drawAimingLine(g2d);
+        highlightBalls(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -189,6 +190,21 @@ public class GamePanel extends JPanel {
 
         g2d.setStroke(new BasicStroke(1.0f));
         g2d.drawOval((int)(endX - 3), (int)(endY - 3), 6, 6);
+    }
+
+    private void highlightBalls(Graphics2D g2d){
+        if (!gameState.isMoving()){
+            g2d.setColor(new Color(207, 207, 207));
+            g2d.setStroke(new BasicStroke(2f));
+            for (Ball ball: table.getBalls()){
+                if(gameState.getTurn().getSide()==ball.getBallType() & !ball.isPocketed()) {
+                    int drawX = (int) (ball.getX() - ball.getRadius());
+                    int drawY = (int) (ball.getY() - ball.getRadius());
+                    int diameter = (int) (ball.getRadius() * 2);
+                    g2d.draw(new Ellipse2D.Double(drawX, drawY, diameter, diameter));
+                }
+            }
+        }
     }
 
     public JButton getExitButton() {

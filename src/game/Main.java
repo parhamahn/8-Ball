@@ -37,16 +37,15 @@ public class Main {
         player1   = new Player("Player 1");
         player2   = new Player("Player 2");
         settings  = new Settings();
-        gameState = new GameState(false);
         table     = new Table();
+        gameState = new GameState(player1, player2, table);
 
-        // Physics created before GamePanel so it can be injected
         physics   = new Physics(table, gameState);
 
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
         GamePlayController gamePlayController = new GamePlayController(table, physics, gameState, gamePanel);
-        gamePanel = new GamePanel(table, physics, gamePlayController);
+        gamePanel = new GamePanel(table, physics, gamePlayController, gameState);
 
         menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
