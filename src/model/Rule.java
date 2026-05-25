@@ -32,9 +32,17 @@ public class Rule {
         return true;
     }
 
+    public boolean checkPocketedAndPlayer(Ball ball, Player player){
+        if(ball.getBallType()==player.getSide()){
+            return true;
+        }
+        return false;
+    }
+
     public void resetBreak() {
         cushionCollisionedBalls.clear();
         anyBallsPocketed = false;
+        inBreakCheck = true;
     }
 
     public List<Ball> getCushionCollisionedBalls() {
