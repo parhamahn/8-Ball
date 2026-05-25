@@ -1,7 +1,5 @@
 package model;
 
-import java.util.List;
-
 public class GameState {
     private Table table;
     private boolean isMoving;
@@ -10,7 +8,7 @@ public class GameState {
     private Player turn;
     private boolean sidesAssigned;
     private boolean isFirstShot;
-    private boolean isInBreak;
+    private boolean doneBreak;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -21,8 +19,7 @@ public class GameState {
         this.player2.setSide(Ball.BallType.STRIPE);
         this.turn = (Math.random()<=0.5? player1 : player2);
         this.sidesAssigned = false;
-        this.isFirstShot = true;
-        this.isInBreak = true;
+
     }
 
     public GameState(boolean isMoving){
@@ -71,11 +68,11 @@ public class GameState {
         isFirstShot = firstShot;
     }
 
-    public boolean isInBreak() {
-        return isInBreak;
+    public boolean isDoneBreak() {
+        return doneBreak;
     }
 
-    public void setInBreak(boolean inBreak) {
-        isInBreak = inBreak;
+    public void setDoneBreak(boolean doneBreak) {
+        this.doneBreak = doneBreak;
     }
 }

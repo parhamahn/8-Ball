@@ -6,10 +6,12 @@ import java.util.List;
 public class Physics {
     private Table table;
     private GameState gameState;
+    private Rule rule;
 
-    public Physics(Table table, GameState gameState){
+    public Physics(Table table, GameState gameState, Rule rule){
         this.table = table;
         this.gameState = gameState;
+        this.rule = rule;
     }
 
     public void updatePhysics(double dt){
@@ -32,7 +34,8 @@ public class Physics {
         Ball cueBall = table.getBall(0);
         cueBall.setVx(power* direction.get(0));
         cueBall.setVy(power* direction.get(1));
-        gameState.switchTurns();
+        rule.setShotFired(true);
+        rule.setCheckingRule(false);
     }
 
     public void updatePosition(Ball ball, double dt){
@@ -45,6 +48,7 @@ public class Physics {
             ball.setPocketed(true);
             ball.setVy(0);
             ball.setVx(0);
+            rule.setAnyBallsPocketed(true);
         }
     }
 
@@ -83,6 +87,7 @@ public class Physics {
                     ball.setVy(ball.getVy() + impulse * ny);
                     other.setVx(other.getVx() - impulse * nx);
                     other.setVy(other.getVy() - impulse * ny);
+
                 }
             }
         }
@@ -131,6 +136,8 @@ public class Physics {
 
                 ball.setVx(ball.getVx() - (1 + Table.CUSHION_RESTITUTION) * velDotNormal * nx);
                 ball.setVy(ball.getVy() - (1 + Table.CUSHION_RESTITUTION) * velDotNormal * ny);
+
+                rule.addCushionCollisionedBall(ball);
             }
         }
     }
@@ -141,6 +148,9 @@ public class Physics {
                 gameState.setMoving(true);
                 break;
             }
+        }
+        if (!gameState.isMoving() && rule.isShotFired()) {
+            rule.setCheckingRule(true);
         }
     }
 }

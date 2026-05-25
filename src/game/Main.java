@@ -23,6 +23,7 @@ public class Main {
     private SettingsController settingsController;
     private GameController gameController;
     private GamePanel gamePanel;
+    private Rule rule;
 
     public static void main(String[] args) {
         new Main().createAndShowGUI();
@@ -39,13 +40,13 @@ public class Main {
         settings  = new Settings();
         table     = new Table();
         gameState = new GameState(player1, player2, table);
-
-        physics   = new Physics(table, gameState);
+        rule = new Rule(gameState, table);
+        physics   = new Physics(table, gameState, rule);
 
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
         GamePlayController gamePlayController = new GamePlayController(table, physics, gameState, gamePanel);
-        gamePanel = new GamePanel(table, physics, gamePlayController, gameState);
+        gamePanel = new GamePanel(table, physics, gamePlayController, gameState, rule);
 
         menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
@@ -76,6 +77,7 @@ public class Main {
 
     public void showGame() {
         table.resetTable();
+        rule.resetBreak();
         gameState.setMoving(false);
         cardLayout.show(mainPanel, "game");
         gamePanel.startLoop();

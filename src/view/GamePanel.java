@@ -19,12 +19,14 @@ public class GamePanel extends JPanel {
     private Timer gameLoop;
     private GamePlayController gamePlayController;
     private GameState gameState;
+    private Rule rule;
 
-    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController, GameState gameState) {
+    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController, GameState gameState, Rule rule) {
         this.table = table;
         this.physics = physics;
         this.gamePlayController = gamePlayController;
         this.gameState = gameState;
+        this.rule = rule;
 
         setBackground(new Color(30, 30, 40));
         exitButton = new JButton("Exit");
@@ -33,6 +35,7 @@ public class GamePanel extends JPanel {
 
         gameLoop = new Timer(1000 / FPS, e -> {
             physics.updatePhysics(DT);
+            rule.checkRules();
             repaint();
         });
     }
