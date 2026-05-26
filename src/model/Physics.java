@@ -36,6 +36,7 @@ public class Physics {
         cueBall.setVy(power* direction.get(1));
         rule.setShotFired(true);
         rule.setCheckingRule(false);
+        gameState.setShouldChangeTurn(true);
     }
 
     public void updatePosition(Ball ball, double dt){
@@ -49,9 +50,15 @@ public class Physics {
             ball.setVy(0);
             ball.setVx(0);
             rule.setAnyBallsPocketed(true);
-            if(rule.checkPocketedAndPlayer(ball, gameState.getTurn())){gameState.setShouldChangeTurn(false);};
-        }else{
-            gameState.setShouldChangeTurn(true);
+            if(!gameState.isSidesAssigned()){
+                gameState.assignSides(ball.getBallType());
+                gameState.setSidesAssigned(true);
+                gameState.setShouldChangeTurn(false);
+            }else{
+                if((rule.checkPocketedAndPlayer(ball, gameState.getTurn()))){
+                    gameState.setShouldChangeTurn(false);
+                }
+            }
         }
     }
 

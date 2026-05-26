@@ -201,7 +201,14 @@ public class GamePanel extends JPanel {
             g2d.setColor(new Color(207, 207, 207));
             g2d.setStroke(new BasicStroke(2f));
             for (Ball ball: table.getBalls()){
-                if(gameState.getTurn().getSide()==ball.getBallType() & !ball.isPocketed()) {
+                if(gameState.isSidesAssigned()){
+                    if(gameState.getTurn().getSide()==ball.getBallType() & !ball.isPocketed()) {
+                        int drawX = (int) (ball.getX() - ball.getRadius());
+                        int drawY = (int) (ball.getY() - ball.getRadius());
+                        int diameter = (int) (ball.getRadius() * 2);
+                        g2d.draw(new Ellipse2D.Double(drawX, drawY, diameter, diameter));
+                    }
+                }else if(ball.getBallType()!= Ball.BallType.CUE & ball.getBallType()!= Ball.BallType.EIGHT & !ball.isPocketed()){
                     int drawX = (int) (ball.getX() - ball.getRadius());
                     int drawY = (int) (ball.getY() - ball.getRadius());
                     int diameter = (int) (ball.getRadius() * 2);
@@ -227,15 +234,15 @@ public class GamePanel extends JPanel {
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
             g2.setFont(new Font("Arial", Font.ITALIC, 18));
-            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
+            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer2().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p2Name, rightX - textWidth, y);
         } else {
+            g2.setFont(new Font("Arial", Font.BOLD, 18));
+            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer2().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
+            g2.drawString(p2Name, rightX - textWidth, y);
             g2.setFont(new Font("Arial", Font.ITALIC, 18));
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
-            g2.setFont(new Font("Arial", Font.BOLD, 18));
-            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
-            g2.drawString(p2Name, rightX - textWidth, y);
         }
     }
 

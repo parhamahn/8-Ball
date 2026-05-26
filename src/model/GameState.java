@@ -16,8 +16,8 @@ public class GameState {
         this.player1 = player1;
         this.player2 = player2;
         this.table = table;
-        this.player1.setSide(Ball.BallType.SOLID);
-        this.player2.setSide(Ball.BallType.STRIPE);
+        this.player1.setSide(Ball.BallType.CUE);
+        this.player2.setSide(Ball.BallType.CUE);
         this.turn = (Math.random()<=0.5? player1 : player2);
         this.sidesAssigned = false;
         this.shouldChangeTurn = true;
@@ -83,5 +83,14 @@ public class GameState {
 
     public void setShouldChangeTurn(boolean shouldChangeTurn) {
         this.shouldChangeTurn = shouldChangeTurn;
+    }
+
+    public void assignSides(Ball.BallType turnPlayerSide){
+        this.turn.setSide(turnPlayerSide);
+        if(this.turn==player1){
+            player2.setSide(turnPlayerSide== Ball.BallType.SOLID? Ball.BallType.STRIPE: Ball.BallType.SOLID);
+        }else{
+            player1.setSide(turnPlayerSide== Ball.BallType.SOLID? Ball.BallType.STRIPE: Ball.BallType.SOLID);
+        }
     }
 }
