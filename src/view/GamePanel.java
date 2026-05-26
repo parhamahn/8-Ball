@@ -48,6 +48,19 @@ public class GamePanel extends JPanel {
         if (gameLoop.isRunning()) gameLoop.stop();
     }
 
+    private Color getColor(int number) {
+        Color[] ballColors = {
+                new Color(255, 215, 0),
+                new Color(0, 69, 0),
+                new Color(220, 20, 60),
+                new Color(0, 0, 139),
+                new Color(255, 140, 0),
+                new Color(128, 0, 128),
+                new Color(139, 69, 19)
+        };
+        return ballColors[(number - 1) % 7];
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -145,20 +158,43 @@ public class GamePanel extends JPanel {
         for (Ball ball : table.getBalls()) {
             if (ball.isPocketed()) continue;
 
+            int drawX = (int)(ball.getX() - ball.getRadius());
+            int drawY = (int)(ball.getY() - ball.getRadius());
+            int diameter = (int)(ball.getRadius() * 2);
+            double r = ball.getRadius();
+
             if (ball.getBallType() == Ball.BallType.CUE) {
                 g2d.setColor(Color.WHITE);
             } else if (ball.getBallType() == Ball.BallType.EIGHT) {
                 g2d.setColor(Color.BLACK);
             } else if (ball.getBallType() == Ball.BallType.SOLID) {
-                g2d.setColor(Color.RED);
+                g2d.setColor(getColor(ball.getNumber()));
             } else {
-                g2d.setColor(Color.YELLOW);
+                g2d.setColor(getColor(ball.getNumber()));
             }
-
-            int drawX    = (int)(ball.getX() - ball.getRadius());
-            int drawY    = (int)(ball.getY() - ball.getRadius());
-            int diameter = (int)(ball.getRadius() * 2);
             g2d.fillOval(drawX, drawY, diameter, diameter);
+
+            g2d.setColor(new Color(255, 255, 255, 170));
+            g2d.fillOval(drawX + (int)(r * 0.15), drawY + (int)(r * 0.15),
+                    (int)(r * 1.25), (int)(r * 1.25));
+
+            if (ball.getBallType() != Ball.BallType.CUE) {
+
+                int circleX = drawX + (int)(r * 0.32);
+                int circleY = drawY + (int)(r * 0.32);
+                int circleSize = (int)(r * 1.36);
+
+                if (ball.getBallType() == Ball.BallType.STRIPE) {
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillOval(circleX, circleY, circleSize, circleSize);
+                }
+                else if (ball.getBallType() == Ball.BallType.EIGHT) {
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillOval(circleX, circleY, circleSize, circleSize);
+                    g2d.setColor(Color.BLACK);
+                }
+
+            }
         }
     }
 

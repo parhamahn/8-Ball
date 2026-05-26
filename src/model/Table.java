@@ -63,9 +63,11 @@ public class Table {
                 if (number == 8) {
                     type = Ball.BallType.EIGHT;
                 } else if (number <= 7) {
-                    type = Ball.BallType.STRIPE;
-                } else {
                     type = Ball.BallType.SOLID;
+                } else if (number >= 9) {
+                    type = Ball.BallType.STRIPE;
+                }else{
+                    type = Ball.BallType.CUE;
                 }
 
                 this.balls.add(new Ball(x, y, type, number));
