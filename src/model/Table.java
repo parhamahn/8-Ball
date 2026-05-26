@@ -213,6 +213,15 @@ public class Table {
         return false;
     }
 
+    public boolean allTypesPocketed(Ball.BallType type){
+        for(Ball ball:this.balls){
+            if(ball.getBallType()==type&!ball.isPocketed()){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void resetTable(){
         resetPockets();
         resetBalls();

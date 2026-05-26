@@ -102,4 +102,10 @@ public class Rule {
     public void setShotFired(boolean shotFired) {
         this.shotFired = shotFired;
     }
+
+    public boolean checkWin(Player player){
+        return table.allTypesPocketed(player.getSide());
+    }
+
+
 }
