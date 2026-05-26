@@ -10,6 +10,8 @@ public class GameState {
     private boolean isFirstShot;
     private boolean doneBreak;
     private boolean shouldChangeTurn;
+    private boolean isPocketChosen;
+    private Pocket chosenPocket;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -92,5 +94,23 @@ public class GameState {
         }else{
             player1.setSide(turnPlayerSide== Ball.BallType.SOLID? Ball.BallType.STRIPE: Ball.BallType.SOLID);
         }
+    }
+
+    public boolean isPocketChosen() {
+        return isPocketChosen;
+    }
+
+    public Pocket getChosenPocket() {
+        return chosenPocket;
+    }
+
+    public void setChosenPocket(Pocket chosenPocket) {
+        this.chosenPocket = chosenPocket;
+        this.isPocketChosen = true;
+    }
+
+    public void resetPocketSelection() {
+        this.chosenPocket = null;
+        this.isPocketChosen = false;
     }
 }

@@ -84,6 +84,7 @@ public class Rule {
             gameState.switchTurns();
             this.shotFired = false;
             this.checkingRule = false;
+            gameState.resetPocketSelection();
         }
     }
 

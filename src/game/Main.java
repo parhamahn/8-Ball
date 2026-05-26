@@ -77,6 +77,7 @@ public class Main {
 
     public void showGame() {
         table.resetTable();
+        gameState.resetPocketSelection();
         rule.resetBreak();
         gameState.setMoving(false);
         cardLayout.show(mainPanel, "game");

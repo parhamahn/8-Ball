@@ -1,9 +1,6 @@
 package controller;
 
-import model.Ball;
-import model.GameState;
-import model.Physics;
-import model.Table;
+import model.*;
 import view.GamePanel;
 
 import javax.swing.*;
@@ -30,13 +27,26 @@ public class GamePlayController extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && !gameState.isMoving()) {
-            double distanceToBall = Point2D.distance(
-                    e.getX(), e.getY(),
-                    this.table.getBall(0).getX(), this.table.getBall(0).getY()
-            );
-            if (distanceToBall < this.table.getBall(0).getRadius() * 2) {
-                dragStart = new Point2D.Double(e.getX(), e.getY());
-                dragCurrent = null;
+
+            if (!gameState.isPocketChosen()) {
+                Pocket pocket = findPocketAt(e.getX(), e.getY());
+                if (pocket != null) {
+                    gameState.setChosenPocket(pocket);
+                    if (gamePanel != null){
+                        gamePanel.repaint();
+                    }
+                    return;
+                }
+            }
+            if(gameState.isPocketChosen()) {
+                double distanceToBall = Point2D.distance(
+                        e.getX(), e.getY(),
+                        this.table.getBall(0).getX(), this.table.getBall(0).getY()
+                );
+                if (distanceToBall < this.table.getBall(0).getRadius() * 2) {
+                    dragStart = new Point2D.Double(e.getX(), e.getY());
+                    dragCurrent = null;
+                }
             }
         }
     }
@@ -53,7 +63,7 @@ public class GamePlayController extends MouseAdapter {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e) && dragStart != null && !gameState.isMoving()) {
+        if (SwingUtilities.isLeftMouseButton(e) && dragStart != null && !gameState.isMoving() && gameState.isPocketChosen()) {
             if (dragCurrent != null) {
                 double dx = dragStart.getX() - dragCurrent.getX();
                 double dy = dragStart.getY() - dragCurrent.getY();
@@ -79,6 +89,16 @@ public class GamePlayController extends MouseAdapter {
                 gamePanel.repaint();
             }
         }
+    }
+
+    private Pocket findPocketAt(int x, int y) {
+        for (Pocket p : table.getPockets()) {
+            double dist = Point2D.distance(x, y, p.getCenterX(), p.getCenterY());
+            if (dist < p.getRadius() * 1.5) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public boolean isDragging() {

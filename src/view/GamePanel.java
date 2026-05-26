@@ -74,6 +74,7 @@ public class GamePanel extends JPanel {
         drawAimingLine(g2d);
         highlightBalls(g2d);
         drawUI(g2d);
+        drawChosenPocket(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -200,6 +201,7 @@ public class GamePanel extends JPanel {
 
     private void drawAimingLine(Graphics2D g2d) {
         if (gamePlayController == null) return;
+        if (!gameState.isPocketChosen()) return;
         if (!gamePlayController.isDragging()) return;
 
         Ball cueBall = table.getBall(0);
@@ -280,6 +282,23 @@ public class GamePanel extends JPanel {
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
         }
+    }
+
+    private void drawChosenPocket(Graphics2D g2d) {
+        if (!gameState.isPocketChosen() || gameState.getChosenPocket() == null) return;
+
+        Pocket p = gameState.getChosenPocket();
+        g2d.setColor(new Color(255, 255, 0, 180));
+        g2d.setStroke(new BasicStroke(4.0f));
+        int x = (int) (p.getCenterX() - p.getRadius() * 1.3);
+        int y = (int) (p.getCenterY() - p.getRadius() * 1.3);
+        int size = (int) (p.getRadius() * 2.6);
+        g2d.drawOval(x, y, size, size);
+
+        g2d.setColor(new Color(255, 255, 100));
+        g2d.drawOval((int)(p.getCenterX() - p.getRadius() * 0.8),
+                (int)(p.getCenterY() - p.getRadius() * 0.8),
+                (int)(p.getRadius() * 1.6), (int)(p.getRadius() * 1.6));
     }
 
     public JButton getExitButton() {
