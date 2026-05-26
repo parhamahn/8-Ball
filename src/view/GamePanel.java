@@ -60,6 +60,7 @@ public class GamePanel extends JPanel {
         drawBalls(g2d);
         drawAimingLine(g2d);
         highlightBalls(g2d);
+        drawUI(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -207,6 +208,34 @@ public class GamePanel extends JPanel {
                     g2d.draw(new Ellipse2D.Double(drawX, drawY, diameter, diameter));
                 }
             }
+        }
+    }
+
+    private void drawUI(Graphics2D g2) {
+
+        String p1Name = gameState.getPlayer1().getName();
+        String p2Name = gameState.getPlayer2().getName();
+        int y = 30;
+        int leftX = 20;
+        int rightX = getWidth();
+        FontMetrics fm = g2.getFontMetrics();
+        String p2Text = "Player 2: " + p2Name;
+        int textWidth = fm.stringWidth(p2Text);
+
+        if (gameState.getTurn() == gameState.getPlayer1()) {
+            g2.setFont(new Font("Arial", Font.BOLD, 18));
+            g2.setColor(Color.YELLOW);
+            g2.drawString(p1Name, leftX, y);
+            g2.setFont(new Font("Arial", Font.ITALIC, 18));
+            g2.setColor(Color.WHITE);
+            g2.drawString(p2Name, rightX - textWidth, y);
+        } else {
+            g2.setFont(new Font("Arial", Font.ITALIC, 18));
+            g2.setColor(Color.WHITE);
+            g2.drawString(p1Name, leftX, y);
+            g2.setFont(new Font("Arial", Font.BOLD, 18));
+            g2.setColor(Color.YELLOW);
+            g2.drawString(p2Name, rightX - textWidth, y);
         }
     }
 

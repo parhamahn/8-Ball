@@ -9,6 +9,7 @@ public class GameState {
     private boolean sidesAssigned;
     private boolean isFirstShot;
     private boolean doneBreak;
+    private boolean shouldChangeTurn;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -19,7 +20,7 @@ public class GameState {
         this.player2.setSide(Ball.BallType.STRIPE);
         this.turn = (Math.random()<=0.5? player1 : player2);
         this.sidesAssigned = false;
-
+        this.shouldChangeTurn = true;
     }
 
     public GameState(boolean isMoving){
@@ -34,7 +35,7 @@ public class GameState {
         isMoving = moving;
     }
 
-    public void switchTurns(){this.turn = this.turn==player1? player2:player1;}
+    public void switchTurns(){if(this.shouldChangeTurn){this.turn = this.turn==player1? player2:player1;}}
 
     public Player getPlayer1() {
         return player1;
@@ -74,5 +75,13 @@ public class GameState {
 
     public void setDoneBreak(boolean doneBreak) {
         this.doneBreak = doneBreak;
+    }
+
+    public boolean isShouldChangeTurn() {
+        return shouldChangeTurn;
+    }
+
+    public void setShouldChangeTurn(boolean shouldChangeTurn) {
+        this.shouldChangeTurn = shouldChangeTurn;
     }
 }

@@ -49,7 +49,9 @@ public class Physics {
             ball.setVy(0);
             ball.setVx(0);
             rule.setAnyBallsPocketed(true);
-            if(rule.checkPocketedAndPlayer(ball, gameState.getTurn())){gameState.switchTurns();};
+            if(rule.checkPocketedAndPlayer(ball, gameState.getTurn())){gameState.setShouldChangeTurn(false);};
+        }else{
+            gameState.setShouldChangeTurn(true);
         }
     }
 
