@@ -224,17 +224,17 @@ public class GamePanel extends JPanel {
 
         if (gameState.getTurn() == gameState.getPlayer1()) {
             g2.setFont(new Font("Arial", Font.BOLD, 18));
-            g2.setColor(Color.YELLOW);
+            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
             g2.setFont(new Font("Arial", Font.ITALIC, 18));
-            g2.setColor(Color.WHITE);
+            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p2Name, rightX - textWidth, y);
         } else {
             g2.setFont(new Font("Arial", Font.ITALIC, 18));
-            g2.setColor(Color.WHITE);
+            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
             g2.setFont(new Font("Arial", Font.BOLD, 18));
-            g2.setColor(Color.YELLOW);
+            g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p2Name, rightX - textWidth, y);
         }
     }
