@@ -12,6 +12,13 @@ public class GameState {
     private boolean shouldChangeTurn;
     private boolean isPocketChosen;
     private Pocket chosenPocket;
+    private boolean foulHappened;
+    private Ball firstCueCollisionedBall;
+    private boolean everCollisionedWithSide;
+    private boolean anyBallPocketed;
+    private boolean anyCushionCollision;
+    private boolean collisionWithEight;
+    private boolean ballInHand;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -23,6 +30,14 @@ public class GameState {
         this.turn = (Math.random()<=0.5? player1 : player2);
         this.sidesAssigned = false;
         this.shouldChangeTurn = true;
+        this.isPocketChosen = false;
+        this.foulHappened = false;
+        this.firstCueCollisionedBall = null;
+        this.everCollisionedWithSide = false;
+        this.anyBallPocketed = false;
+        this.anyCushionCollision = false;
+        this.collisionWithEight = false;
+        this.ballInHand = false;
     }
 
     public GameState(boolean isMoving){
@@ -113,4 +128,56 @@ public class GameState {
         this.chosenPocket = null;
         this.isPocketChosen = false;
     }
+
+    public boolean isFoulHappened() {
+        return foulHappened;
+    }
+
+    public void setFoulHappened(boolean foulHappened) {
+        this.foulHappened = foulHappened;
+    }
+
+    public Ball getFirstCueCollisionedBall() {
+        return firstCueCollisionedBall;
+    }
+
+    public void setFirstCueCollisionedBall(Ball firstCueCollisionedBall) {
+        this.firstCueCollisionedBall = firstCueCollisionedBall;
+    }
+
+    public boolean isEverCollisionedWithSide() {
+        return everCollisionedWithSide;
+    }
+
+    public void setEverCollisionedWithSide(boolean everCollisionedWithSide) {
+        this.everCollisionedWithSide = everCollisionedWithSide;
+    }
+
+    public boolean isAnyCushionCollision() {
+        return anyCushionCollision;
+    }
+
+    public void setAnyCushionCollision(boolean anyCushionCollision) {
+        this.anyCushionCollision = anyCushionCollision;
+    }
+
+    public boolean isAnyBallPocketed() {
+        return anyBallPocketed;
+    }
+
+    public void setAnyBallPocketed(boolean anyBallPocketed) {
+        this.anyBallPocketed = anyBallPocketed;
+    }
+
+    public boolean isCollisionWithEight() {
+        return collisionWithEight;
+    }
+
+    public void setCollisionWithEight(boolean collisionWithEight) {
+        this.collisionWithEight = collisionWithEight;
+    }
+
+    public boolean isBallInHand() { return ballInHand; }
+    public void setBallInHand(boolean ballInHand) { this.ballInHand = ballInHand; }
+
 }

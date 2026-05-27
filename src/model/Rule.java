@@ -22,16 +22,6 @@ public class Rule {
         this.shotFired = false;
     }
 
-    public boolean checkBreak(){
-        if(!gameState.isDoneBreak()){
-            if (cushionCollisionedBalls.toArray().length >= 4 | anyBallsPocketed){
-                return true;
-            }
-            return false;
-        }
-        return true;
-    }
-
     public boolean checkPocketedAndPlayer(Ball ball, Player player){
         if(ball.getBallType()==player.getSide()){
             return true;
@@ -45,18 +35,10 @@ public class Rule {
         inBreakCheck = true;
     }
 
-    public List<Ball> getCushionCollisionedBalls() {
-        return this.cushionCollisionedBalls;
-    }
-
     public void addCushionCollisionedBall(Ball ball) {
         if (!this.cushionCollisionedBalls.contains(ball) & ball.getBallType() != Ball.BallType.CUE){
             this.cushionCollisionedBalls.add(ball);
         }
-    }
-
-    public boolean isAnyBallsPocketed() {
-        return anyBallsPocketed;
     }
 
     public void setAnyBallsPocketed(boolean anyBallsPocketed) {
@@ -67,10 +49,20 @@ public class Rule {
         return inBreakCheck;
     }
 
-    public void checkRules(){
+    public boolean checkIfBreak(){
+        if(!gameState.isDoneBreak()){
+            if (cushionCollisionedBalls.toArray().length >= 4 | anyBallsPocketed){
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void checkBreak(){
         if(this.isCheckingRule()){
             if (this.isInBreakCheck()){
-                if(this.checkBreak()) {
+                if(this.checkIfBreak()) {
                     this.inBreakCheck = false;
                     gameState.setDoneBreak(true);
                 }else{
@@ -81,7 +73,70 @@ public class Rule {
                     return;
                 }
             }
+            this.shotFired = false;
+            this.checkingRule = false;
+            gameState.resetPocketSelection();
+        }
+    }
+
+    public boolean checkIfCueBallPocketed(Ball ball){
+        return ball.getBallType()== Ball.BallType.CUE;
+    }
+
+    public boolean checkIfCueCollisionedWithWrongBall(Player player){
+        return (gameState.getFirstCueCollisionedBall()==null || (!gameState.isSidesAssigned() || (gameState.isSidesAssigned()&(gameState.getFirstCueCollisionedBall().getBallType()==player.getSide() & gameState.getFirstCueCollisionedBall().getBallType()== Ball.BallType.EIGHT))));
+    }
+
+    public boolean checkIfEverCollisionedWithSide(){
+        return gameState.isEverCollisionedWithSide();
+    }
+
+    public boolean checkIfAnyPocketsOrCushionCollisions(){
+        return gameState.isAnyBallPocketed() || gameState.isAnyCushionCollision();
+    }
+
+    public boolean checkIfEightCollisionsFoul(Table table, Player player){
+        if(gameState.isCollisionWithEight()){
+            for(Ball tball: table.getBalls()){
+                if(!tball.isPocketed() & tball.getBallType()==player.getSide()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void checkFouls(Ball ball, Player player, Table table){
+        if (checkIfCueBallPocketed(ball) || checkIfCueCollisionedWithWrongBall(player) || !checkIfEverCollisionedWithSide() || !checkIfAnyPocketsOrCushionCollisions() || checkIfEightCollisionsFoul(table, player)){
+            gameState.setFoulHappened(true);
+            Ball cueBall = table.getBall(0);
+            cueBall.setPocketed(false);
+            cueBall.setVx(0);
+            cueBall.setVy(0);
+            cueBall.setX(table.getStartX() + table.getWidth() / 8.0);
+            cueBall.setY(table.getStartY() + table.getHeight() / 2.0);
+            gameState.setBallInHand(true);
+        }
+    }
+
+    public void checkRules(){
+        if(this.isCheckingRule()){
+            checkBreak();
+            checkFouls(table.getBall(0), gameState.getTurn(), table);
+
+            if (gameState.isFoulHappened()) {
+                gameState.setShouldChangeTurn(true);
+            }
+
             gameState.switchTurns();
+
+            gameState.setEverCollisionedWithSide(false);
+            gameState.setAnyBallPocketed(false);
+            gameState.setAnyCushionCollision(false);
+            gameState.setCollisionWithEight(false);
+            gameState.setShouldChangeTurn(true);
+            gameState.setFoulHappened(false);
+
             this.shotFired = false;
             this.checkingRule = false;
             gameState.resetPocketSelection();
@@ -107,6 +162,4 @@ public class Rule {
     public boolean checkWin(Player player){
         return table.allTypesPocketed(player.getSide());
     }
-
-
 }

@@ -75,6 +75,7 @@ public class GamePanel extends JPanel {
         highlightBalls(g2d);
         drawUI(g2d);
         drawChosenPocket(g2d);
+        drawBallInHand(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -299,6 +300,34 @@ public class GamePanel extends JPanel {
         g2d.drawOval((int)(p.getCenterX() - p.getRadius() * 0.8),
                 (int)(p.getCenterY() - p.getRadius() * 0.8),
                 (int)(p.getRadius() * 1.6), (int)(p.getRadius() * 1.6));
+    }
+
+    private void drawBallInHand(Graphics2D g2d) {
+        if (!gameState.isBallInHand()) return;
+
+        double headString = table.getStartX() + table.getWidth() / 4.0;
+
+        g2d.setColor(new Color(255, 255, 255, 30));
+        g2d.fillRect(
+                (int) (table.getStartX()+2*Pocket.getDefaultRadius()),
+                (int) (table.getStartY()+2*Pocket.getDefaultRadius()),
+                (int)(headString - table.getStartX() -2*Pocket.getDefaultRadius()),
+                (int) (table.getHeight()-4*Pocket.getDefaultRadius())
+        );
+
+        g2d.setColor(new Color(255, 220, 0, 200));
+        g2d.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                10, new float[]{8, 6}, 0));
+        g2d.drawLine((int) headString, (int) table.getStartY(),
+                (int) headString, (int) table.getEndY());
+
+        g2d.setStroke(new BasicStroke(1f));
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+        String msg = "Ball in hand — drag cue ball behind the line";
+        FontMetrics fm = g2d.getFontMetrics();
+        int msgX = (int)(table.getStartX() + (table.getWidth() - fm.stringWidth(msg)) / 2);
+        g2d.drawString(msg, msgX, (int) table.getStartY() - 10);
     }
 
     public JButton getExitButton() {

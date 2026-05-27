@@ -50,6 +50,7 @@ public class Physics {
             ball.setVy(0);
             ball.setVx(0);
             rule.setAnyBallsPocketed(true);
+            gameState.setAnyBallPocketed(true);
             if(!gameState.isSidesAssigned()){
                 gameState.assignSides(ball.getBallType());
                 gameState.setSidesAssigned(true);
@@ -98,6 +99,19 @@ public class Physics {
                     other.setVx(other.getVx() - impulse * nx);
                     other.setVy(other.getVy() - impulse * ny);
 
+                    if(ball.getBallType()== Ball.BallType.CUE || other.getBallType()== Ball.BallType.CUE){
+                        Ball cue = ball.getBallType()==Ball.BallType.CUE ? ball : other;
+                        Ball tempother = ball.getBallType()==Ball.BallType.CUE ? other : ball;
+                        if (tempother.getBallType()== Ball.BallType.EIGHT){
+                            gameState.setCollisionWithEight(true);
+                        }
+                        if(gameState.getFirstCueCollisionedBall()==null) {
+                            gameState.setFirstCueCollisionedBall(tempother);
+                        }
+                        if(tempother.getBallType()==gameState.getTurn().getSide()){
+                            gameState.setEverCollisionedWithSide(true);
+                        }
+                    }
                 }
             }
         }
@@ -148,6 +162,7 @@ public class Physics {
                 ball.setVy(ball.getVy() - (1 + Table.CUSHION_RESTITUTION) * velDotNormal * ny);
 
                 rule.addCushionCollisionedBall(ball);
+                gameState.setAnyCushionCollision(true);
             }
         }
     }
@@ -161,6 +176,7 @@ public class Physics {
         }
         if (!gameState.isMoving() && rule.isShotFired()) {
             rule.setCheckingRule(true);
+            gameState.setFirstCueCollisionedBall(null);
         }
     }
 }
