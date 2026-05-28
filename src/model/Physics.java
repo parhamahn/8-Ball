@@ -108,7 +108,7 @@ public class Physics {
                         if(gameState.getFirstCueCollisionedBall()==null) {
                             gameState.setFirstCueCollisionedBall(tempother);
                         }
-                        if(tempother.getBallType()==gameState.getTurn().getSide()){
+                        if(!gameState.isSidesAssigned() || tempother.getBallType()==gameState.getTurn().getSide()){
                             gameState.setEverCollisionedWithSide(true);
                         }
                     }
@@ -176,7 +176,6 @@ public class Physics {
         }
         if (!gameState.isMoving() && rule.isShotFired()) {
             rule.setCheckingRule(true);
-            gameState.setFirstCueCollisionedBall(null);
         }
     }
 }
