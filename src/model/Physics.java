@@ -1,5 +1,7 @@
 package model;
 
+import game.Main;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class Physics {
         rule.setShotFired(true);
         rule.setCheckingRule(false);
         gameState.setShouldChangeTurn(true);
+
     }
 
     public void updatePosition(Ball ball, double dt){
@@ -60,6 +63,7 @@ public class Physics {
                     gameState.setShouldChangeTurn(false);
                 }
             }
+            rule.checkWin(gameState.getTurn());
         }
     }
 

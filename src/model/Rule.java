@@ -84,9 +84,10 @@ public class Rule {
     }
 
     public boolean checkIfCueCollisionedWithWrongBallFoul(Player player){
+        if(gameState.getFirstCueCollisionedBall()==null)return true;
         if (gameState.isSidesAssigned()) {
             Ball first = gameState.getFirstCueCollisionedBall();
-            if (first.getBallType() == Ball.BallType.EIGHT) {
+            if (first.getBallType() == Ball.BallType.EIGHT && table.allTypesPocketed(gameState.getTurn().getSide())) {
                 return !table.allTypesPocketed(player.getSide());
             }
             return first.getBallType() != player.getSide();
@@ -168,6 +169,7 @@ public class Rule {
     }
 
     public boolean checkWin(Player player){
-        return table.allTypesPocketed(player.getSide());
+        gameState.setWinner(gameState.getTurn());
+        return (table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed());
     }
 }

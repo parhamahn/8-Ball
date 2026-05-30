@@ -14,6 +14,7 @@ public class GamePanel extends JPanel {
     private static final double DT = 1.0;
 
     private JButton exitButton;
+    private JButton debugButton;
     private Table table;
     private Physics physics;
     private Timer gameLoop;
@@ -29,9 +30,14 @@ public class GamePanel extends JPanel {
         this.rule = rule;
 
         setBackground(new Color(30, 30, 40));
+
         exitButton = new JButton("Exit");
         exitButton.setPreferredSize(new Dimension(100, 40));
         add(exitButton);
+
+        debugButton = new JButton("Debug");
+        debugButton.setPreferredSize(new Dimension(100, 40));
+        add(debugButton);
 
         gameLoop = new Timer(1000 / FPS, e -> {
             physics.updatePhysics(DT);
@@ -246,6 +252,11 @@ public class GamePanel extends JPanel {
                         int drawY = (int) (ball.getY() - ball.getRadius());
                         int diameter = (int) (ball.getRadius() * 2);
                         g2d.draw(new Ellipse2D.Double(drawX, drawY, diameter, diameter));
+                    } else if (table.allTypesPocketed(gameState.getTurn().getSide()) && !table.getBall(8).isPocketed() && ball.getBallType()== Ball.BallType.EIGHT) {
+                        int drawX = (int) (ball.getX() - ball.getRadius());
+                        int drawY = (int) (ball.getY() - ball.getRadius());
+                        int diameter = (int) (ball.getRadius() * 2);
+                        g2d.draw(new Ellipse2D.Double(drawX, drawY, diameter, diameter));
                     }
                 }else if(ball.getBallType()!= Ball.BallType.CUE & ball.getBallType()!= Ball.BallType.EIGHT & !ball.isPocketed()){
                     int drawX = (int) (ball.getX() - ball.getRadius());
@@ -333,4 +344,5 @@ public class GamePanel extends JPanel {
     public JButton getExitButton() {
         return exitButton;
     }
+    public JButton getDebugButton() {return debugButton;}
 }

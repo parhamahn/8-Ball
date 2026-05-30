@@ -50,7 +50,7 @@ public class Main {
 
         menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
-        gameController     = new GameController(gamePanel, this);
+        gameController     = new GameController(gamePanel, this, table, gameState);
 
         gamePanel.addMouseListener(gamePlayController);
         gamePanel.addMouseMotionListener(gamePlayController);
@@ -82,5 +82,13 @@ public class Main {
         gameState.setMoving(false);
         cardLayout.show(mainPanel, "game");
         gamePanel.startLoop();
+        if(gameState.isEnded()) {
+            showWin();
+            showMenu();
+        }
+    }
+
+    public void showWin(){
+        JOptionPane.showMessageDialog(gamePanel, "...Test...");
     }
 }

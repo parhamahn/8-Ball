@@ -19,6 +19,8 @@ public class GameState {
     private boolean anyCushionCollision;
     private boolean collisionWithEight;
     private boolean ballInHand;
+    private boolean isEnded;
+    private Player winner;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -38,6 +40,8 @@ public class GameState {
         this.anyCushionCollision = false;
         this.collisionWithEight = false;
         this.ballInHand = false;
+        this.isEnded = false;
+        this.winner = null;
     }
 
     public GameState(boolean isMoving){
@@ -180,4 +184,19 @@ public class GameState {
     public boolean isBallInHand() { return ballInHand; }
     public void setBallInHand(boolean ballInHand) { this.ballInHand = ballInHand; }
 
+    public Player getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
+    }
+
+    public boolean isEnded() {
+        return isEnded;
+    }
+
+    public void setEnded(boolean ended) {
+        isEnded = ended;
+    }
 }
