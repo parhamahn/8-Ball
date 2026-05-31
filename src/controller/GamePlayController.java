@@ -39,14 +39,13 @@ public class GamePlayController extends MouseAdapter {
                 return;
             }
 
-            if (!gameState.isPocketChosen()) {
-                Pocket pocket = findPocketAt(e.getX(), e.getY());
-                if (pocket != null) {
-                    gameState.setChosenPocket(pocket);
-                    if (gamePanel != null) gamePanel.repaint();
-                    return;
-                }
+            Pocket pocket = findPocketAt(e.getX(), e.getY());
+            if (pocket != null) {
+                gameState.setChosenPocket(pocket);
+                if (gamePanel != null) gamePanel.repaint();
+                return;
             }
+
 
             if (gameState.isPocketChosen()) {
                 double distanceToBall = Point2D.distance(
