@@ -72,6 +72,7 @@ public class Rule {
             this.shotFired = false;
             this.checkingRule = false;
             gameState.resetPocketSelection();
+            gameState.resetSelectedSpin();
         }
     }
 
@@ -144,6 +145,7 @@ public class Rule {
             this.shotFired = false;
             this.checkingRule = false;
             gameState.resetPocketSelection();
+            gameState.resetSelectedSpin();
             gameState.setFirstCueCollisionedBall(null);
         }
     }

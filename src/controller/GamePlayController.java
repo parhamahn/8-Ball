@@ -57,6 +57,16 @@ public class GamePlayController extends MouseAdapter {
                     dragCurrent = null;
                 }
             }
+
+            if (gameState.isPocketChosen()) {
+                Ball.Spin spin = findSpinAt(e.getX(), e.getY());
+                if (spin != null) {
+                    gameState.setSelectedSpin(spin);
+                    if (gamePanel != null) gamePanel.repaint();
+                    return;
+                }
+            }
+
         }
     }
 
@@ -132,6 +142,31 @@ public class GamePlayController extends MouseAdapter {
         for (Pocket p : table.getPockets()) {
             double dist = Point2D.distance(x, y, p.getCenterX(), p.getCenterY());
             if (dist < p.getRadius() * 1.5) return p;
+        }
+        return null;
+    }
+
+    private Ball.Spin findSpinAt(int x, int y) {
+        int selectorRadius = 50;
+        int selectorX = (int) table.getWidth() / 2;
+        int selectorY = 120;
+        int innerOffset = (int)(selectorRadius * 0.6);
+        int hitRadius = 12;
+
+        int[][] dotCenters = {
+                {selectorX,               selectorY},
+                {selectorX,               selectorY - innerOffset},
+                {selectorX,               selectorY + innerOffset},
+                {selectorX - innerOffset, selectorY},
+                {selectorX + innerOffset, selectorY}
+        };
+
+        Ball.Spin[] types = {Ball.Spin.STOP, Ball.Spin.TOP, Ball.Spin.BACK, Ball.Spin.LEFT, Ball.Spin.RIGHT};
+
+        for (int i = 0; i < dotCenters.length; i++) {
+            if (Point2D.distance(x, y, dotCenters[i][0], dotCenters[i][1]) <= hitRadius) {
+                return types[i];
+            }
         }
         return null;
     }

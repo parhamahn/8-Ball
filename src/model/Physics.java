@@ -8,7 +8,7 @@ import java.util.List;
 public class Physics {
     private Table table;
     private GameState gameState;
-    private Rule rule;
+    private Rule rule;;
 
     public Physics(Table table, GameState gameState, Rule rule){
         this.table = table;

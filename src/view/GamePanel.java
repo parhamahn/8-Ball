@@ -38,8 +38,8 @@ public class GamePanel extends JPanel {
         add(exitButton);
 
         debugButton = new JButton("Debug");
-        debugButton.setPreferredSize(new Dimension(100, 40));
-        add(debugButton);
+        /*debugButton.setPreferredSize(new Dimension(100, 40));
+        add(debugButton);*/
 
         gameLoop = new Timer(1000 / FPS, e -> {
             physics.updatePhysics(DT);
@@ -88,6 +88,7 @@ public class GamePanel extends JPanel {
         drawUI(g2d);
         drawChosenPocket(g2d);
         drawBallInHand(g2d);
+        drawSpinSelector(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -345,6 +346,46 @@ public class GamePanel extends JPanel {
         FontMetrics fm = g2d.getFontMetrics();
         int msgX = (int)(table.getStartX() + (table.getWidth() - fm.stringWidth(msg)) / 2);
         g2d.drawString(msg, msgX, (int) table.getStartY() - 10);
+    }
+
+    private void drawSpinSelector(Graphics2D g2d) {
+        int selectorRadius = 50;
+        int selectorX = (int) table.getWidth() / 2;
+        int selectorY = 120;
+
+        boolean canSelectSpin = !gameState.isMoving() && gameState.isPocketChosen();
+        int alpha = canSelectSpin ? 255 : 100;
+
+        g2d.setColor(new Color(255, 255, 255, alpha));
+        g2d.setStroke(new BasicStroke(2.0f));
+        g2d.fillOval(selectorX - selectorRadius, selectorY - selectorRadius, selectorRadius * 2, selectorRadius * 2);
+
+        int pointRadius = 8;
+        int innerOffset = (int)(selectorRadius * 0.6);
+
+        int[][] dotCenters = {
+                {selectorX, selectorY},
+                {selectorX, selectorY - innerOffset},
+                {selectorX, selectorY + innerOffset},
+                {selectorX - innerOffset, selectorY},
+                {selectorX + innerOffset, selectorY}
+        };
+
+        Ball.Spin selectedSpin = gameState.getSelectedSpin();
+
+        for (int i = 0; i < dotCenters.length; i++) {
+            int cx = dotCenters[i][0];
+            int cy = dotCenters[i][1];
+            boolean isSelected = selectedSpin != null && selectedSpin.ordinal() == i;
+
+            if (isSelected) {
+                g2d.setColor(new Color(200, 0, 0, alpha));
+                g2d.fillOval(cx - pointRadius, cy - pointRadius, pointRadius * 2, pointRadius * 2);
+            } else {
+                g2d.setColor(new Color(200, 0, 0, alpha));
+                g2d.drawOval(cx - pointRadius, cy - pointRadius, pointRadius * 2, pointRadius * 2);
+            }
+        }
     }
 
     public JButton getExitButton() {
