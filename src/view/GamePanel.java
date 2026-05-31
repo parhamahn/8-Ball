@@ -1,12 +1,12 @@
 package view;
 
 import controller.GamePlayController;
-import model.*;
-
-import javax.swing.*;
+import game.Main;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import javax.swing.*;
+import model.*;
 
 public class GamePanel extends JPanel {
 
@@ -21,13 +21,15 @@ public class GamePanel extends JPanel {
     private GamePlayController gamePlayController;
     private GameState gameState;
     private Rule rule;
+    private Main mainApp;
 
-    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController, GameState gameState, Rule rule) {
+    public GamePanel(Table table, Physics physics, GamePlayController gamePlayController, GameState gameState, Rule rule, Main mainApp) {
         this.table = table;
         this.physics = physics;
         this.gamePlayController = gamePlayController;
         this.gameState = gameState;
         this.rule = rule;
+        this.mainApp = mainApp;
 
         setBackground(new Color(30, 30, 40));
 
@@ -42,6 +44,10 @@ public class GamePanel extends JPanel {
         gameLoop = new Timer(1000 / FPS, e -> {
             physics.updatePhysics(DT);
             rule.checkRules();
+            if (gameState.isEnded()) {
+                stopLoop();
+                mainApp.showWin(gameState.getWinner());
+            }
             repaint();
         });
     }

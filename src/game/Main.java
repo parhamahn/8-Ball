@@ -46,7 +46,7 @@ public class Main {
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
         GamePlayController gamePlayController = new GamePlayController(table, physics, gameState, gamePanel);
-        gamePanel = new GamePanel(table, physics, gamePlayController, gameState, rule);
+        gamePanel = new GamePanel(table, physics, gamePlayController, gameState, rule, this);
 
         menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
@@ -77,18 +77,13 @@ public class Main {
 
     public void showGame() {
         table.resetTable();
-        gameState.resetPocketSelection();
+        gameState.resetGameState();
         rule.resetBreak();
-        gameState.setMoving(false);
         cardLayout.show(mainPanel, "game");
         gamePanel.startLoop();
-        if(gameState.isEnded()) {
-            showWin();
-            showMenu();
-        }
     }
 
-    public void showWin(){
-        JOptionPane.showMessageDialog(gamePanel, "...Test...");
+    public void showWin(Player winner){
+        JOptionPane.showMessageDialog(gamePanel, winner.getName()+" Won the game");
     }
 }

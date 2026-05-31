@@ -23,16 +23,15 @@ public class Rule {
     }
 
     public boolean checkPocketedAndPlayer(Ball ball, Player player){
-        if(ball.getBallType()==player.getSide()){
-            return true;
-        }
-        return false;
+        return ball.getBallType()==player.getSide();
     }
 
     public void resetBreak() {
         cushionCollisionedBalls.clear();
         anyBallsPocketed = false;
         inBreakCheck = true;
+        checkingRule = false;
+        shotFired = false;
     }
 
     public void addCushionCollisionedBall(Ball ball) {
@@ -51,10 +50,7 @@ public class Rule {
 
     public boolean checkIfBreak(){
         if(!gameState.isDoneBreak()){
-            if (cushionCollisionedBalls.toArray().length >= 4 | anyBallsPocketed){
-                return true;
-            }
-            return false;
+            return cushionCollisionedBalls.toArray().length >= 4 | anyBallsPocketed;
         }
         return true;
     }
@@ -170,6 +166,10 @@ public class Rule {
 
     public boolean checkWin(Player player){
         gameState.setWinner(gameState.getTurn());
-        return (table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed());
+        boolean won = table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed();
+        if (won) {
+            gameState.setEnded(true);
+        }
+        return won;
     }
 }

@@ -199,4 +199,25 @@ public class GameState {
     public void setEnded(boolean ended) {
         isEnded = ended;
     }
+
+    public void resetGameState() {
+        this.isMoving = false;
+        this.player1.setSide(Ball.BallType.CUE);
+        this.player2.setSide(Ball.BallType.CUE);
+        this.turn = (Math.random() <= 0.5 ? player1 : player2);
+        this.sidesAssigned = false;
+        this.shouldChangeTurn = true;
+        this.isPocketChosen = false;
+        this.foulHappened = false;
+        this.firstCueCollisionedBall = null;
+        this.everCollisionedWithSide = false;
+        this.anyBallPocketed = false;
+        this.anyCushionCollision = false;
+        this.collisionWithEight = false;
+        this.ballInHand = false;
+        this.isEnded = false;
+        this.winner = null;
+        this.doneBreak = false;
+        this.chosenPocket = null;
+    }
 }
