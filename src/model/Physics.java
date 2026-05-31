@@ -67,10 +67,8 @@ public class Physics {
         }
     }
 
-    public void checkBallsCollision(Ball ball){
-        if(!(ball.getVx()==0 && ball.getVy()==0)){
-
-            // for balls
+    public void checkBallsCollision(Ball ball) {
+        if (!(ball.getVx() == 0 && ball.getVy() == 0)) {
             for (Ball other : table.getBalls()) {
                 if (ball == other || other.isPocketed()) continue;
 
@@ -93,27 +91,57 @@ public class Physics {
                     double rvx = ball.getVx() - other.getVx();
                     double rvy = ball.getVy() - other.getVy();
                     double velAlongNormal = rvx * nx + rvy * ny;
-
                     if (velAlongNormal > 0) continue;
 
-                    double impulse = -velAlongNormal;
+                    boolean cueInvolved = ball.getBallType() == Ball.BallType.CUE
+                            || other.getBallType() == Ball.BallType.CUE;
+                    Ball cue      = ball.getBallType()  == Ball.BallType.CUE ? ball  : other;
+                    Ball otherBall = ball.getBallType() == Ball.BallType.CUE ? other : ball;
 
+                    double preCueVx = 0, preCueVy = 0, origSpeed = 0;
+                    boolean isFirstCollision = false;
+                    if (cueInvolved) {
+                        preCueVx = cue.getVx();
+                        preCueVy = cue.getVy();
+                        origSpeed = Math.hypot(preCueVx, preCueVy);
+                        isFirstCollision = gameState.getFirstCueCollisionedBall() == null;
+                    }
+
+                    double impulse = -velAlongNormal;
                     ball.setVx(ball.getVx() + impulse * nx);
                     ball.setVy(ball.getVy() + impulse * ny);
                     other.setVx(other.getVx() - impulse * nx);
                     other.setVy(other.getVy() - impulse * ny);
 
-                    if(ball.getBallType()== Ball.BallType.CUE || other.getBallType()== Ball.BallType.CUE){
-                        Ball cue = ball.getBallType()==Ball.BallType.CUE ? ball : other;
-                        Ball tempother = ball.getBallType()==Ball.BallType.CUE ? other : ball;
-                        if (tempother.getBallType()== Ball.BallType.EIGHT){
+                    if (cueInvolved) {
+                        if (otherBall.getBallType() == Ball.BallType.EIGHT)
                             gameState.setCollisionWithEight(true);
-                        }
-                        if(gameState.getFirstCueCollisionedBall()==null) {
-                            gameState.setFirstCueCollisionedBall(tempother);
-                        }
-                        if(!gameState.isSidesAssigned() || tempother.getBallType()==gameState.getTurn().getSide()){
+                        if (gameState.getFirstCueCollisionedBall() == null)
+                            gameState.setFirstCueCollisionedBall(otherBall);
+                        if (!gameState.isSidesAssigned() || otherBall.getBallType() == gameState.getTurn().getSide())
                             gameState.setEverCollisionedWithSide(true);
+
+                        if (isFirstCollision && origSpeed > 0) {
+                            double forwardX = preCueVx / origSpeed;
+                            double forwardY = preCueVy / origSpeed;
+                            double tangentX = -forwardY;
+                            double tangentY =  forwardX;
+                            double spinFactor = 0.4;
+
+                            Ball.Spin spin = gameState.getSelectedSpin();
+                            if (spin == Ball.Spin.TOP) {
+                                cue.setVx(cue.getVx() + spinFactor * origSpeed * forwardX);
+                                cue.setVy(cue.getVy() + spinFactor * origSpeed * forwardY);
+                            } else if (spin == Ball.Spin.BACK) {
+                                cue.setVx(cue.getVx() - spinFactor * origSpeed * forwardX);
+                                cue.setVy(cue.getVy() - spinFactor * origSpeed * forwardY);
+                            } else if (spin == Ball.Spin.LEFT) {
+                                cue.setVx(cue.getVx() + spinFactor * origSpeed * tangentX);
+                                cue.setVy(cue.getVy() + spinFactor * origSpeed * tangentY);
+                            } else if (spin == Ball.Spin.RIGHT) {
+                                cue.setVx(cue.getVx() - spinFactor * origSpeed * tangentX);
+                                cue.setVy(cue.getVy() - spinFactor * origSpeed * tangentY);
+                            }
                         }
                     }
                 }
