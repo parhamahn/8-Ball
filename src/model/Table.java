@@ -206,13 +206,13 @@ public class Table {
         return null;
     }
 
-    public boolean willPocket(Ball ball){
+    public Pocket willPocket(Ball ball){
         for (Pocket pocket: pockets){
             if (Point2D.distance(ball.getX(), ball.getY(), pocket.getCenterX(), pocket.getCenterY())<3*(pocket.getRadius()-ball.getRadius())){
-                return true;
+                return pocket;
             }
         }
-        return false;
+        return null;
     }
 
     public boolean allTypesPocketed(Ball.BallType type){

@@ -50,7 +50,10 @@ public class Rule {
 
     public boolean checkIfBreak(){
         if(!gameState.isDoneBreak()){
-            return cushionCollisionedBalls.toArray().length >= 4 | anyBallsPocketed;
+            if (table.getBall(8).isPocketed()){
+                return false;
+            }
+            return cushionCollisionedBalls.toArray().length >= 4 || anyBallsPocketed;
         }
         return true;
     }
@@ -103,7 +106,7 @@ public class Rule {
     public boolean checkIfEightCollisionsFoul(Table table, Player player){
         if(gameState.isCollisionWithEight()){
             for(Ball tball: table.getBalls()){
-                if(!tball.isPocketed() & tball.getBallType()==player.getSide()){
+                if(!tball.isPocketed() && tball.getBallType()==player.getSide()){
                     return true;
                 }
             }
@@ -167,11 +170,22 @@ public class Rule {
     }
 
     public boolean checkWin(Player player){
-        gameState.setWinner(gameState.getTurn());
         boolean won = table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed();
         if (won) {
+            gameState.setWinner(player);
+            gameState.setLoser(gameState.getPlayer1()!=player?gameState.getPlayer1():gameState.getPlayer2());
             gameState.setEnded(true);
         }
         return won;
+    }
+
+    public boolean checkLose(Player player, Pocket eightPocketedIn){
+        boolean lose = ((!table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed()) || (table.getBall(8).isPocketed() && gameState.getChosenPocket()!=eightPocketedIn) || (table.allTypesPocketed(gameState.getTurn().getSide()) && (table.getBall(0).isPocketed()) ||  (checkIfCueCollisionedWithWrongBallFoul(player)) || (checkIfEverCollisionedWithSideFoul()) || (checkIfAnyPocketsOrCushionCollisionsFoul())));
+        if (lose){
+            gameState.setLoser(player);
+            gameState.setWinner(gameState.getPlayer1()!=player?gameState.getPlayer1():gameState.getPlayer2());
+            gameState.setEnded(true);
+        }
+        return lose;
     }
 }

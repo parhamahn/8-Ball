@@ -21,7 +21,9 @@ public class GameState {
     private boolean ballInHand;
     private boolean isEnded;
     private Player winner;
+    private Player loser;
     private Ball.Spin selectedSpin;
+    private Pocket eightPocket;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -43,7 +45,9 @@ public class GameState {
         this.ballInHand = false;
         this.isEnded = false;
         this.winner = null;
+        this.loser = null;
         this.selectedSpin = Ball.Spin.STOP;
+        this.eightPocket = null;
     }
 
     public GameState(boolean isMoving){
@@ -198,6 +202,14 @@ public class GameState {
         this.winner = winner;
     }
 
+    public Player getLoser() {
+        return loser;
+    }
+
+    public void setLoser(Player loser) {
+        this.loser = loser;
+    }
+
     public boolean isEnded() {
         return isEnded;
     }
@@ -226,6 +238,15 @@ public class GameState {
         this.doneBreak = false;
         this.chosenPocket = null;
         this.selectedSpin = Ball.Spin.STOP;
+        this.eightPocket = null;
+    }
+
+    public Pocket getEightPocket() {
+        return eightPocket;
+    }
+
+    public void setEightPocket(Pocket eightPocket) {
+        this.eightPocket = eightPocket;
     }
 
     public Ball.Spin getSelectedSpin() {

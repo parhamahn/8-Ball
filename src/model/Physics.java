@@ -48,12 +48,18 @@ public class Physics {
     }
 
     public void gettingInPocket(Ball ball){
-        if (table.willPocket(ball)){
+        Pocket pocket = table.willPocket(ball);
+        if (pocket != null){
             ball.setPocketed(true);
             ball.setVy(0);
             ball.setVx(0);
             rule.setAnyBallsPocketed(true);
             gameState.setAnyBallPocketed(true);
+            
+            if (ball.getBallType() == Ball.BallType.EIGHT) {
+                gameState.setEightPocket(pocket);
+            }
+            
             if(!gameState.isSidesAssigned()){
                 gameState.assignSides(ball.getBallType());
                 gameState.setSidesAssigned(true);
@@ -64,6 +70,7 @@ public class Physics {
                 }
             }
             rule.checkWin(gameState.getTurn());
+            rule.checkLose(gameState.getTurn(), gameState.getEightPocket());
         }
     }
 
