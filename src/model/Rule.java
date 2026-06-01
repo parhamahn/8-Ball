@@ -105,6 +105,7 @@ public class Rule {
 
     public boolean checkIfEightCollisionsFoul(Table table, Player player){
         if(gameState.isCollisionWithEight()){
+            if(table.allTypesPocketed(player.getSide())) return false;
             for(Ball tball: table.getBalls()){
                 if(!tball.isPocketed() && tball.getBallType()==player.getSide()){
                     return true;
@@ -180,7 +181,10 @@ public class Rule {
     }
 
     public boolean checkLose(Player player, Pocket eightPocketedIn){
-        boolean lose = ((!table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed()) || (table.getBall(8).isPocketed() && gameState.getChosenPocket()!=eightPocketedIn) || (table.allTypesPocketed(gameState.getTurn().getSide()) && (table.getBall(0).isPocketed()) ||  (checkIfCueCollisionedWithWrongBallFoul(player)) || (checkIfEverCollisionedWithSideFoul()) || (checkIfAnyPocketsOrCushionCollisionsFoul())));
+        boolean eightPocketedWrong = !table.allTypesPocketed(player.getSide()) && table.getBall(8).isPocketed();
+        boolean eightPocketedInWrongPocket = table.getBall(8).isPocketed() && gameState.getChosenPocket()!=eightPocketedIn;
+        boolean foulOnEightShot = table.allTypesPocketed(player.getSide()) && gameState.isFoulHappened();
+        boolean lose = eightPocketedWrong || eightPocketedInWrongPocket || foulOnEightShot;
         if (lose){
             gameState.setLoser(player);
             gameState.setWinner(gameState.getPlayer1()!=player?gameState.getPlayer1():gameState.getPlayer2());

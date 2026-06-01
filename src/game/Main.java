@@ -22,6 +22,8 @@ public class Main {
     private MenuController menuController;
     private SettingsController settingsController;
     private GameController gameController;
+    private RecordsController recordsController;
+    private RecordsPanel recordsPanel;
     private GamePanel gamePanel;
     private Rule rule;
 
@@ -45,9 +47,11 @@ public class Main {
 
         MenuPanel     menuPanel     = new MenuPanel();
         SettingsPanel settingsPanel = new SettingsPanel();
+        recordsPanel = new RecordsPanel();
         GamePlayController gamePlayController = new GamePlayController(table, physics, gameState, gamePanel);
         gamePanel = new GamePanel(table, physics, gamePlayController, gameState, rule, this);
 
+        recordsController = new RecordsController();
         menuController     = new MenuController(menuPanel, this);
         settingsController = new SettingsController(settingsPanel, this, player1, player2, settings);
         gameController     = new GameController(gamePanel, this, table, gameState);
@@ -55,10 +59,13 @@ public class Main {
         gamePanel.addMouseListener(gamePlayController);
         gamePanel.addMouseMotionListener(gamePlayController);
 
+        recordsPanel.getBackButton().addActionListener(e -> showMenu());
+
         cardLayout = new CardLayout();
         mainPanel  = new JPanel(cardLayout);
         mainPanel.add(menuPanel,     "menu");
         mainPanel.add(settingsPanel, "settings");
+        mainPanel.add(recordsPanel,  "records");
         mainPanel.add(gamePanel,     "game");
 
         frame.add(mainPanel);
@@ -83,7 +90,16 @@ public class Main {
         gamePanel.startLoop();
     }
 
+    public void showRecords() {
+        recordsPanel.displayRecords(recordsController.loadFromFile());
+        cardLayout.show(mainPanel, "records");
+    }
+
     public void showWin(Player winner){
         JOptionPane.showMessageDialog(gamePanel, winner.getName()+" Won the game");
+        Player loser = (winner == player1) ? player2 : player1;
+        java.util.List<model.Record> records = recordsController.loadFromFile();
+        records.add(new model.Record(winner, loser));
+        recordsController.saveIntoFile(records);
     }
 }
