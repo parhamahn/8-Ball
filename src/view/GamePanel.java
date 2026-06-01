@@ -34,7 +34,7 @@ public class GamePanel extends JPanel {
         setBackground(new Color(30, 30, 40));
 
         exitButton = new JButton("Exit");
-        exitButton.setPreferredSize(new Dimension(100, 40));
+        exitButton.setPreferredSize(new Dimension(100, 25));
         add(exitButton);
 
         debugButton = new JButton("Debug");
@@ -89,6 +89,7 @@ public class GamePanel extends JPanel {
         drawChosenPocket(g2d);
         drawBallInHand(g2d);
         drawSpinSelector(g2d);
+        drawFoul(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -282,24 +283,36 @@ public class GamePanel extends JPanel {
         int y = 30;
         int leftX = 20;
         int rightX = getWidth();
+        int namegroupspace = 40;
         FontMetrics fm = g2.getFontMetrics();
         String p2Text = "Player 2: " + p2Name;
         int textWidth = fm.stringWidth(p2Text);
+
+        String groupText = gameState.getPlayer2().getSide() == Ball.BallType.STRIPE ? "STRIPE" : "SOLID";
+        int groupWidth = 90;
 
         if (gameState.getTurn() == gameState.getPlayer1()) {
             g2.setFont(new Font("Arial", Font.BOLD, 18));
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
+            if (gameState.isSidesAssigned()){g2.drawString(gameState.getPlayer1().getSide()==Ball.BallType.STRIPE?"STRIPE":"SOLID", leftX, y+namegroupspace);}
+            g2.drawString(String.valueOf(gameState.getPlayer1().getPoints()), leftX, y+(2*namegroupspace));
             g2.setFont(new Font("Arial", Font.ITALIC, 18));
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer2().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p2Name, rightX - textWidth, y);
+            if (gameState.isSidesAssigned()){g2.drawString(groupText, rightX - groupWidth, y + namegroupspace);}
+            g2.drawString(String.valueOf(gameState.getPlayer2().getPoints()), rightX-50, y+(2*namegroupspace));
         } else {
             g2.setFont(new Font("Arial", Font.BOLD, 18));
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer2().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p2Name, rightX - textWidth, y);
+            if (gameState.isSidesAssigned())g2.drawString(groupText, rightX - groupWidth, y+namegroupspace);
+            g2.drawString(String.valueOf(gameState.getPlayer2().getPoints()), rightX-50, y+(2*namegroupspace));
             g2.setFont(new Font("Arial", Font.ITALIC, 18));
             g2.setColor(!gameState.isSidesAssigned()?Color.WHITE:gameState.getPlayer1().getSide()==Ball.BallType.SOLID?Color.RED:Color.YELLOW);
             g2.drawString(p1Name, leftX, y);
+            if (gameState.isSidesAssigned())g2.drawString(gameState.getPlayer1().getSide()==Ball.BallType.STRIPE?"STRIPE":"SOLID", leftX, y+namegroupspace);
+            g2.drawString(String.valueOf(gameState.getPlayer1().getPoints()), leftX, y+(2*namegroupspace));
         }
     }
 
@@ -386,6 +399,20 @@ public class GamePanel extends JPanel {
                 g2d.drawOval(cx - pointRadius, cy - pointRadius, pointRadius * 2, pointRadius * 2);
             }
         }
+    }
+
+    private void drawFoul(Graphics2D g2d){
+        if (!gameState.isFoulHappened()) return;
+        
+        g2d.setStroke(new BasicStroke(1f));
+        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+
+        g2d.setColor(Color.RED);
+        String msg = "FOUL";
+        FontMetrics fm = g2d.getFontMetrics();
+        int msgX = (int)(table.getStartX() + (table.getWidth() - fm.stringWidth(msg)) / 2);
+        int msgY = 60;
+        g2d.drawString(msg, msgX, msgY);
     }
 
     public JButton getExitButton() {

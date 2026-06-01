@@ -109,6 +109,7 @@ public class GamePlayController extends MouseAdapter {
             ballInHandDragging = false;
             dragOffset = null;
             gameState.setBallInHand(false);
+            gameState.setFoulHappened(false);
             if (gamePanel != null) gamePanel.repaint();
             return;
         }

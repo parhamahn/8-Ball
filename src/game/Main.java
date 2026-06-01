@@ -36,6 +36,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 800);
         frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
 
         player1   = new Player("Player 1");
         player2   = new Player("Player 2");

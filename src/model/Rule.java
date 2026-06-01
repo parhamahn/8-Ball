@@ -116,6 +116,7 @@ public class Rule {
     }
 
     public void checkFouls(Ball ball, Player player, Table table){
+        System.out.println("checkFouls: cuePocketed=" + checkIfCueBallPocketedFoul(ball) + ", wrongBall=" + checkIfCueCollisionedWithWrongBallFoul(player) + ", noSide=" + checkIfEverCollisionedWithSideFoul() + ", noPocketOrCushion=" + checkIfAnyPocketsOrCushionCollisionsFoul() + ", eightFoul=" + checkIfEightCollisionsFoul(table, player));
         if (checkIfCueBallPocketedFoul(ball) ||  checkIfCueCollisionedWithWrongBallFoul(player) || checkIfEverCollisionedWithSideFoul() || checkIfAnyPocketsOrCushionCollisionsFoul() || checkIfEightCollisionsFoul(table, player)){
             gameState.setFoulHappened(true);
             Ball cueBall = table.getBall(0);
@@ -135,16 +136,15 @@ public class Rule {
 
             if (gameState.isFoulHappened()) {
                 gameState.setShouldChangeTurn(true);
+            } else {
+                gameState.switchTurns();
             }
-
-            gameState.switchTurns();
 
             gameState.setEverCollisionedWithSide(false);
             gameState.setAnyBallPocketed(false);
             gameState.setAnyCushionCollision(false);
             gameState.setCollisionWithEight(false);
             gameState.setShouldChangeTurn(true);
-            gameState.setFoulHappened(false);
 
             this.shotFired = false;
             this.checkingRule = false;

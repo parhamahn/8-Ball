@@ -3,9 +3,14 @@ package model;
 public class Player {
     private String name;
     private Ball.BallType side;
+    private int points;
 
     public Player(String name) {
+
         this.name = name;
+        this.side = null;
+        this.points = 0;
+
     }
 
     public String getName() {
@@ -24,4 +29,11 @@ public class Player {
         this.side = side;
     }
 
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
 }

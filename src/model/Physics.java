@@ -60,13 +60,15 @@ public class Physics {
                 gameState.setEightPocket(pocket);
             }
             
-            if(!gameState.isSidesAssigned()){
+            if(!gameState.isSidesAssigned() && ball.getBallType()!= Ball.BallType.CUE && ball.getBallType()!= Ball.BallType.EIGHT){
                 gameState.assignSides(ball.getBallType());
                 gameState.setSidesAssigned(true);
                 gameState.setShouldChangeTurn(false);
+                gameState.getTurn().setPoints(gameState.getTurn().getPoints()+1);
             }else{
                 if((rule.checkPocketedAndPlayer(ball, gameState.getTurn()))){
                     gameState.setShouldChangeTurn(false);
+                    gameState.getTurn().setPoints(gameState.getTurn().getPoints()+1);
                 }
             }
             rule.checkWin(gameState.getTurn());
