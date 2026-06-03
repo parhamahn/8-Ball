@@ -24,6 +24,8 @@ public class GameState {
     private Player loser;
     private Ball.Spin selectedSpin;
     private Pocket eightPocket;
+    private int turnTimer;
+    private boolean timerRunning;
 
     public GameState(Player player1, Player player2, Table table){
         this.isMoving = false;
@@ -48,6 +50,8 @@ public class GameState {
         this.loser = null;
         this.selectedSpin = Ball.Spin.STOP;
         this.eightPocket = null;
+        this.turnTimer = 30;
+        this.timerRunning = false;
     }
 
     public GameState(boolean isMoving){
@@ -62,7 +66,11 @@ public class GameState {
         isMoving = moving;
     }
 
-    public void switchTurns(){if(this.shouldChangeTurn){this.turn = this.turn==player1? player2:player1;}}
+    public void switchTurns(){
+        if(this.shouldChangeTurn){
+            this.turn = this.turn==player1? player2:player1;
+        }
+    }
 
     public Player getPlayer1() {
         return player1;
@@ -255,5 +263,25 @@ public class GameState {
 
     public void setSelectedSpin(Ball.Spin selectedSpin) {
         this.selectedSpin = selectedSpin;
+    }
+
+    public int getTurnTimer() {
+        return turnTimer;
+    }
+
+    public void passOneSecond() {
+        if (turnTimer > 0) turnTimer--;
+    }
+
+    public void resetTimer() {
+        this.turnTimer = 30;
+    }
+
+    public boolean isTimerRunning() {
+        return timerRunning;
+    }
+
+    public void setTimerRunning(boolean timerRunning) {
+        this.timerRunning = timerRunning;
     }
 }

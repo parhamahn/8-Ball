@@ -39,6 +39,7 @@ public class Physics {
         rule.setShotFired(true);
         rule.setCheckingRule(false);
         gameState.setShouldChangeTurn(true);
+        gameState.setTimerRunning(false);
 
     }
 

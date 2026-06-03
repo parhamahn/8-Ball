@@ -140,6 +140,9 @@ public class Rule {
                 gameState.switchTurns();
             }
 
+            gameState.resetTimer();
+            
+            gameState.setTimerRunning(true);
             gameState.setEverCollisionedWithSide(false);
             gameState.setAnyBallPocketed(false);
             gameState.setAnyCushionCollision(false);

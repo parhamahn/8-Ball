@@ -12,6 +12,7 @@ public class GamePanel extends JPanel {
 
     private static final int FPS = 60;
     private static final double DT = 1.0;
+    private static final int TURN_TIME = 30;
 
     private JButton exitButton;
     private JButton debugButton;
@@ -22,6 +23,7 @@ public class GamePanel extends JPanel {
     private GameState gameState;
     private Rule rule;
     private Main mainApp;
+    private Timer turnTimer;
 
     public GamePanel(Table table, Physics physics, GamePlayController gamePlayController, GameState gameState, Rule rule, Main mainApp) {
         this.table = table;
@@ -50,14 +52,39 @@ public class GamePanel extends JPanel {
             }
             repaint();
         });
+
+        turnTimer = new Timer(1000, e -> {
+            if (gameState.isTimerRunning()) {
+                if (gameState.getTurnTimer() <= 0) {
+                    gameState.setShouldChangeTurn(true);
+                    gameState.switchTurns();
+                    gameState.resetTimer();
+                } else if (!gameState.isMoving()) {
+                    gameState.passOneSecond();
+                }
+                repaint();
+            }
+        });
     }
 
     public void startLoop() {
         if (!gameLoop.isRunning()) gameLoop.start();
+        startTurnTimer();
     }
 
     public void stopLoop() {
         if (gameLoop.isRunning()) gameLoop.stop();
+        stopTurnTimer();
+    }
+
+    public void startTurnTimer() {
+        gameState.setTimerRunning(true);
+        if (!turnTimer.isRunning()) turnTimer.start();
+    }
+
+    public void stopTurnTimer() {
+        gameState.setTimerRunning(false);
+        if (turnTimer.isRunning()) turnTimer.stop();
     }
 
     private Color getColor(int number) {
@@ -90,6 +117,7 @@ public class GamePanel extends JPanel {
         drawBallInHand(g2d);
         drawSpinSelector(g2d);
         drawFoul(g2d);
+        drawTimer(g2d);
     }
 
     private void drawTable(Graphics2D g2d) {
@@ -413,6 +441,21 @@ public class GamePanel extends JPanel {
         int msgX = (int)(table.getStartX() + (table.getWidth() - fm.stringWidth(msg)) / 2);
         int msgY = 60;
         g2d.drawString(msg, msgX, msgY);
+    }
+
+    private void drawTimer(Graphics2D g2){
+        int timer = gameState.getTurnTimer();
+        g2.setColor(timer <= 10 ? Color.RED : Color.WHITE);
+        g2.setFont(new Font("Arial", Font.BOLD, 20));
+        String timerText = "Time: " + timer + "s";
+        FontMetrics fm = g2.getFontMetrics();
+        int timerX;
+        if (gameState.getTurn()==gameState.getPlayer1()){
+            timerX = getWidth()/2 - 2*fm.stringWidth(timerText);
+        }else{
+            timerX = getWidth()/2 + fm.stringWidth(timerText);
+        }
+        g2.drawString(timerText, timerX, 20);
     }
 
     public JButton getExitButton() {
