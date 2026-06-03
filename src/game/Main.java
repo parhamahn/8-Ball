@@ -87,6 +87,7 @@ public class Main {
         table.resetTable();
         gameState.resetGameState();
         rule.resetBreak();
+        gameState.resetTimer();
         cardLayout.show(mainPanel, "game");
         gamePanel.startLoop();
     }
