@@ -262,19 +262,282 @@ public class GamePanel extends JPanel {
         dirX /= distance;
         dirY /= distance;
 
-        double power = Math.min(distance / 10.0, 20.0);
-        double lineLength = power * 10.0;
-        double startX = cueBall.getX();
-        double startY = cueBall.getY();
-        double endX = startX + dirX * lineLength;
-        double endY = startY + dirY * lineLength;
+        AimCollision collision = findAimCollision(cueBall, dirX, dirY);
+        if (collision == null) return;
 
+        Stroke previousStroke = g2d.getStroke();
+        Composite previousComposite = g2d.getComposite();
+
+        g2d.setComposite(AlphaComposite.SrcOver.derive(0.45f));
+        g2d.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2d.setColor(Color.WHITE);
-        g2d.setStroke(new BasicStroke(2.0f));
-        g2d.drawLine((int)startX, (int)startY, (int)endX, (int)endY);
+        g2d.drawLine((int)cueBall.getX(), (int)cueBall.getY(), (int)collision.x, (int)collision.y);
 
-        g2d.setStroke(new BasicStroke(1.0f));
-        g2d.drawOval((int)(endX - 3), (int)(endY - 3), 6, 6);
+        if (collision.ball != null) {
+            double targetDirX = collision.ball.getX() - collision.x;
+            double targetDirY = collision.ball.getY() - collision.y;
+            double targetDistance = Math.hypot(targetDirX, targetDirY);
+            if (targetDistance > 0.001) {
+                targetDirX /= targetDistance;
+                targetDirY /= targetDistance;
+                double targetLineLength = Math.min(180.0, Math.max(80.0, distance * 0.6));
+                g2d.setColor(new Color(255, 230, 70));
+                g2d.drawLine(
+                        (int)collision.ball.getX(),
+                        (int)collision.ball.getY(),
+                        (int)(collision.ball.getX() + targetDirX * targetLineLength),
+                        (int)(collision.ball.getY() + targetDirY * targetLineLength)
+                );
+            }
+
+            double cueAfterDirX = dirX;
+            double cueAfterDirY = dirY;
+            if (targetDistance > 0.001) {
+                double cueVelocityX = dirX;
+                double cueVelocityY = dirY;
+                double targetVelocityX = 0.0;
+                double targetVelocityY = 0.0;
+
+                double normalX = collision.x - collision.ball.getX();
+                double normalY = collision.y - collision.ball.getY();
+                double normalLength = Math.hypot(normalX, normalY);
+                if (normalLength > 0.001) {
+                    normalX /= normalLength;
+                    normalY /= normalLength;
+
+                    double relativeVelocityX = cueVelocityX - targetVelocityX;
+                    double relativeVelocityY = cueVelocityY - targetVelocityY;
+                    double velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
+
+                    if (velocityAlongNormal < 0) {
+                        double impulse = -velocityAlongNormal;
+                        cueVelocityX += impulse * normalX;
+                        cueVelocityY += impulse * normalY;
+
+                        double forwardX = dirX;
+                        double forwardY = dirY;
+                        double tangentX = -forwardY;
+                        double tangentY = forwardX;
+                        double spinFactor = 0.4;
+                        Ball.Spin spin = gameState.getSelectedSpin();
+
+                        if (spin == Ball.Spin.TOP) {
+                            cueVelocityX += spinFactor * forwardX;
+                            cueVelocityY += spinFactor * forwardY;
+                        } else if (spin == Ball.Spin.BACK) {
+                            cueVelocityX -= spinFactor * forwardX;
+                            cueVelocityY -= spinFactor * forwardY;
+                        } else if (spin == Ball.Spin.LEFT) {
+                            cueVelocityX += spinFactor * tangentX;
+                            cueVelocityY += spinFactor * tangentY;
+                        } else if (spin == Ball.Spin.RIGHT) {
+                            cueVelocityX -= spinFactor * tangentX;
+                            cueVelocityY -= spinFactor * tangentY;
+                        }
+
+                        double cueAfterLength = Math.hypot(cueVelocityX, cueVelocityY);
+                        if (cueAfterLength > 0.001) {
+                            cueAfterDirX = cueVelocityX / cueAfterLength;
+                            cueAfterDirY = cueVelocityY / cueAfterLength;
+                            double cueLineLength = Math.min(180.0, Math.max(70.0, distance * 0.55));
+                            g2d.setColor(new Color(190, 120, 255));
+                            g2d.drawLine(
+                                    (int)collision.x,
+                                    (int)collision.y,
+                                    (int)(collision.x + cueAfterDirX * cueLineLength),
+                                    (int)(collision.y + cueAfterDirY * cueLineLength)
+                            );
+                        }
+                    }
+                }
+            }
+        } else {
+            double bounceLineLength = Math.min(220.0, Math.max(100.0, distance * 0.8));
+            g2d.setColor(new Color(90, 210, 255));
+            g2d.drawLine(
+                    (int)collision.x,
+                    (int)collision.y,
+                    (int)(collision.x + collision.reflectedDirX * bounceLineLength),
+                    (int)(collision.y + collision.reflectedDirY * bounceLineLength)
+            );
+        }
+
+        g2d.setColor(new Color(255, 255, 255, 160));
+        g2d.fillOval((int)(collision.x - 4), (int)(collision.y - 4), 8, 8);
+        g2d.setComposite(previousComposite);
+        g2d.setStroke(previousStroke);
+    }
+
+    private AimCollision findAimCollision(Ball cueBall, double dirX, double dirY) {
+        AimCollision nearest = null;
+
+        for (Ball ball : table.getBalls()) {
+            if (ball == cueBall || ball.isPocketed()) continue;
+
+            double combinedRadius = cueBall.getRadius() + ball.getRadius();
+            double toBallX = ball.getX() - cueBall.getX();
+            double toBallY = ball.getY() - cueBall.getY();
+            double projection = toBallX * dirX + toBallY * dirY;
+            if (projection <= 0) continue;
+
+            double closestDistanceSq = toBallX * toBallX + toBallY * toBallY - projection * projection;
+            double radiusSq = combinedRadius * combinedRadius;
+            if (closestDistanceSq > radiusSq) continue;
+
+            double offset = Math.sqrt(radiusSq - closestDistanceSq);
+            double collisionDistance = projection - offset;
+            if (collisionDistance <= 0) continue;
+
+            AimCollision candidate = new AimCollision(
+                    cueBall.getX() + dirX * collisionDistance,
+                    cueBall.getY() + dirY * collisionDistance,
+                    collisionDistance
+            );
+            candidate.ball = ball;
+            nearest = closerAimCollision(nearest, candidate);
+        }
+
+        for (int[][] polygon : table.getCushionPolygons()) {
+            int[] xs = polygon[0];
+            int[] ys = polygon[1];
+            for (int i = 0; i < xs.length; i++) {
+                int j = (i + 1) % xs.length;
+                AimCollision candidate = findSegmentAimCollision(
+                        cueBall.getX(), cueBall.getY(), dirX, dirY, cueBall.getRadius(),
+                        xs[i], ys[i], xs[j], ys[j]
+                );
+                nearest = closerAimCollision(nearest, candidate);
+            }
+        }
+
+        return nearest;
+    }
+
+    private AimCollision closerAimCollision(AimCollision current, AimCollision candidate) {
+        if (candidate == null) return current;
+        if (current == null || candidate.distance < current.distance) return candidate;
+        return current;
+    }
+
+    private AimCollision findSegmentAimCollision(double startX, double startY, double dirX, double dirY,
+                                                 double radius, double ax, double ay, double bx, double by) {
+        AimCollision nearest = null;
+
+        double edgeX = bx - ax;
+        double edgeY = by - ay;
+        double edgeLengthSq = edgeX * edgeX + edgeY * edgeY;
+        if (edgeLengthSq == 0) return null;
+
+        double edgeLength = Math.sqrt(edgeLengthSq);
+        double normalX = -edgeY / edgeLength;
+        double normalY = edgeX / edgeLength;
+
+        nearest = closerAimCollision(nearest, findOffsetLineAimCollision(
+                startX, startY, dirX, dirY, radius, ax, ay, bx, by, edgeX, edgeY, edgeLengthSq, normalX, normalY
+        ));
+        nearest = closerAimCollision(nearest, findOffsetLineAimCollision(
+                startX, startY, dirX, dirY, radius, ax, ay, bx, by, edgeX, edgeY, edgeLengthSq, -normalX, -normalY
+        ));
+        nearest = closerAimCollision(nearest, findEndpointAimCollision(startX, startY, dirX, dirY, radius, ax, ay));
+        nearest = closerAimCollision(nearest, findEndpointAimCollision(startX, startY, dirX, dirY, radius, bx, by));
+
+        return nearest;
+    }
+
+    private AimCollision findOffsetLineAimCollision(double startX, double startY, double dirX, double dirY,
+                                                    double radius, double ax, double ay, double bx, double by,
+                                                    double edgeX, double edgeY, double edgeLengthSq,
+                                                    double normalX, double normalY) {
+        double offsetAx = ax + normalX * radius;
+        double offsetAy = ay + normalY * radius;
+        double denominator = cross(dirX, dirY, edgeX, edgeY);
+        if (Math.abs(denominator) < 0.0001) return null;
+
+        double deltaX = offsetAx - startX;
+        double deltaY = offsetAy - startY;
+        double distance = cross(deltaX, deltaY, edgeX, edgeY) / denominator;
+        double segmentPosition = cross(deltaX, deltaY, dirX, dirY) / denominator;
+        if (distance <= 0 || segmentPosition < 0 || segmentPosition > 1) return null;
+
+        double x = startX + dirX * distance;
+        double y = startY + dirY * distance;
+        double closestT = ((x - ax) * edgeX + (y - ay) * edgeY) / edgeLengthSq;
+        closestT = Math.max(0.0, Math.min(1.0, closestT));
+        double closestX = ax + closestT * edgeX;
+        double closestY = ay + closestT * edgeY;
+        double collisionNormalX = x - closestX;
+        double collisionNormalY = y - closestY;
+        double normalLength = Math.hypot(collisionNormalX, collisionNormalY);
+        if (normalLength < 0.001) return null;
+
+        collisionNormalX /= normalLength;
+        collisionNormalY /= normalLength;
+        double velocityDotNormal = dirX * collisionNormalX + dirY * collisionNormalY;
+        if (velocityDotNormal >= 0) return null;
+
+        return createCushionAimCollision(x, y, distance, dirX, dirY, collisionNormalX, collisionNormalY);
+    }
+
+    private AimCollision findEndpointAimCollision(double startX, double startY, double dirX, double dirY,
+                                                  double radius, double pointX, double pointY) {
+        double toPointX = pointX - startX;
+        double toPointY = pointY - startY;
+        double projection = toPointX * dirX + toPointY * dirY;
+        if (projection <= 0) return null;
+
+        double closestDistanceSq = toPointX * toPointX + toPointY * toPointY - projection * projection;
+        double radiusSq = radius * radius;
+        if (closestDistanceSq > radiusSq) return null;
+
+        double distance = projection - Math.sqrt(radiusSq - closestDistanceSq);
+        if (distance <= 0) return null;
+
+        double x = startX + dirX * distance;
+        double y = startY + dirY * distance;
+        double normalX = x - pointX;
+        double normalY = y - pointY;
+        double normalLength = Math.hypot(normalX, normalY);
+        if (normalLength < 0.001) return null;
+
+        normalX /= normalLength;
+        normalY /= normalLength;
+        double velocityDotNormal = dirX * normalX + dirY * normalY;
+        if (velocityDotNormal >= 0) return null;
+
+        return createCushionAimCollision(x, y, distance, dirX, dirY, normalX, normalY);
+    }
+
+    private AimCollision createCushionAimCollision(double x, double y, double distance,
+                                                   double dirX, double dirY, double normalX, double normalY) {
+        double velocityDotNormal = dirX * normalX + dirY * normalY;
+        AimCollision collision = new AimCollision(x, y, distance);
+        collision.reflectedDirX = dirX - 2 * velocityDotNormal * normalX;
+        collision.reflectedDirY = dirY - 2 * velocityDotNormal * normalY;
+        double reflectedLength = Math.hypot(collision.reflectedDirX, collision.reflectedDirY);
+        if (reflectedLength > 0.001) {
+            collision.reflectedDirX /= reflectedLength;
+            collision.reflectedDirY /= reflectedLength;
+        }
+        return collision;
+    }
+
+    private double cross(double ax, double ay, double bx, double by) {
+        return ax * by - ay * bx;
+    }
+
+    private static class AimCollision {
+        private final double x;
+        private final double y;
+        private final double distance;
+        private Ball ball;
+        private double reflectedDirX;
+        private double reflectedDirY;
+
+        private AimCollision(double x, double y, double distance) {
+            this.x = x;
+            this.y = y;
+            this.distance = distance;
+        }
     }
 
     private void highlightBalls(Graphics2D g2d){

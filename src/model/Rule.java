@@ -119,6 +119,7 @@ public class Rule {
         System.out.println("checkFouls: cuePocketed=" + checkIfCueBallPocketedFoul(ball) + ", wrongBall=" + checkIfCueCollisionedWithWrongBallFoul(player) + ", noSide=" + checkIfEverCollisionedWithSideFoul() + ", noPocketOrCushion=" + checkIfAnyPocketsOrCushionCollisionsFoul() + ", eightFoul=" + checkIfEightCollisionsFoul(table, player));
         if (checkIfCueBallPocketedFoul(ball) ||  checkIfCueCollisionedWithWrongBallFoul(player) || checkIfEverCollisionedWithSideFoul() || checkIfAnyPocketsOrCushionCollisionsFoul() || checkIfEightCollisionsFoul(table, player)){
             gameState.setFoulHappened(true);
+            gameState.switchTurns();
             Ball cueBall = table.getBall(0);
             cueBall.setPocketed(false);
             cueBall.setVx(0);
@@ -136,6 +137,8 @@ public class Rule {
 
             if (gameState.isFoulHappened()) {
                 gameState.setShouldChangeTurn(true);
+            } else if (gameState.isValidCalledBallPocketed()) {
+                gameState.setShouldChangeTurn(false);
             } else {
                 gameState.switchTurns();
             }
@@ -145,6 +148,7 @@ public class Rule {
             gameState.setTimerRunning(true);
             gameState.setEverCollisionedWithSide(false);
             gameState.setAnyBallPocketed(false);
+            gameState.setValidCalledBallPocketed(false);
             gameState.setAnyCushionCollision(false);
             gameState.setCollisionWithEight(false);
             gameState.setShouldChangeTurn(true);

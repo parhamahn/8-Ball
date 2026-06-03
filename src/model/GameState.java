@@ -16,6 +16,7 @@ public class GameState {
     private Ball firstCueCollisionedBall;
     private boolean everCollisionedWithSide;
     private boolean anyBallPocketed;
+    private boolean validCalledBallPocketed;
     private boolean anyCushionCollision;
     private boolean collisionWithEight;
     private boolean ballInHand;
@@ -42,6 +43,7 @@ public class GameState {
         this.firstCueCollisionedBall = null;
         this.everCollisionedWithSide = false;
         this.anyBallPocketed = false;
+        this.validCalledBallPocketed = false;
         this.anyCushionCollision = false;
         this.collisionWithEight = false;
         this.ballInHand = false;
@@ -191,6 +193,14 @@ public class GameState {
         this.anyBallPocketed = anyBallPocketed;
     }
 
+    public boolean isValidCalledBallPocketed() {
+        return validCalledBallPocketed;
+    }
+
+    public void setValidCalledBallPocketed(boolean validCalledBallPocketed) {
+        this.validCalledBallPocketed = validCalledBallPocketed;
+    }
+
     public boolean isCollisionWithEight() {
         return collisionWithEight;
     }
@@ -238,6 +248,7 @@ public class GameState {
         this.firstCueCollisionedBall = null;
         this.everCollisionedWithSide = false;
         this.anyBallPocketed = false;
+        this.validCalledBallPocketed = false;
         this.anyCushionCollision = false;
         this.collisionWithEight = false;
         this.ballInHand = false;
