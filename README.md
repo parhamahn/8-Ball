@@ -1,2 +1,2 @@
 # 8-Ball
-Advanced Programming Assignment 1 : A simple 8-Ball game
+Advanced Programming Assignment 2 : A simple 8-Ball game
